@@ -1,0 +1,26 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<!-- unidade de persistencia com o nome financas -->
+	<persistence-unit name="controle_predial">
+		<!-- Implementação do JPA, no nosso caso Hibernate -->
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<!-- Aqui são listadas todas as entidades -->
+		<class>br.com.saojudas.maven.projetointegrado.model.Usuario</class>
+		<class>br.com.saojudas.maven.projetointegrado.model.Conjunto</class>
+		<class>br.com.saojudas.maven.projetointegrado.model.Empresa</class>
+		<properties>
+			<!-- Propriedades JDBC -->
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/controle_predial" />
+			<property name="javax.persistence.jdbc.user" value="alunos" />
+			<property name="javax.persistence.jdbc.password" value="alunos" />
+			<!-- Configurações específicas do Hibernate -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+		</properties>
+	</persistence-unit>
+</persistence>
