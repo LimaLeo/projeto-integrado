@@ -54,6 +54,8 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
+		
+		AplicaLookAndFeel.lookAndFeel();
 
 		// instancia abas
 		abas = new JTabbedPane();
@@ -220,7 +222,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		// congifura o painel
 		setVisible(true);
-		setSize(650, 450);
+		setSize(650, 550);
 		setLocation(350, 80);
 
 		// edicao background

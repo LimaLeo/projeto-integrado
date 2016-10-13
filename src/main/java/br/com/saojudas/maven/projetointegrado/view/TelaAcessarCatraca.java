@@ -51,6 +51,8 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// instancia itens de formulario
 		bEntrar = new JButton();
 		getRootPane().setDefaultButton(bEntrar);

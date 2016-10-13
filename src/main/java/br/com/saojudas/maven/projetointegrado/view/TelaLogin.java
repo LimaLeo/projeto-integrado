@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
 import br.com.saojudas.maven.projetointegrado.components.ReadLoginFile;
+import br.com.saojudas.maven.projetointegrado.view.AplicaLookAndFeel;
 
 public class TelaLogin extends JDialog implements ActionListener {
 
@@ -51,7 +52,9 @@ public class TelaLogin extends JDialog implements ActionListener {
 
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-
+		
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// vetor strings de idimas
 		String[] idiomas = { bn.getString("telaPrincipal.menuitem.portugues"),
 				bn.getString("telaPrincipal.menuitem.ingles"), bn.getString("telaPrincipal.menuitem.espanhol") };
@@ -141,10 +144,9 @@ public class TelaLogin extends JDialog implements ActionListener {
 
 		// Ajustes finais do frame
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setSize(400, 250);
+		setSize(620, 450);
 		setLocationRelativeTo(null);
 		setVisible(true);
-
 	}
 
 	// Implementacao do metodo da interface ActionListener

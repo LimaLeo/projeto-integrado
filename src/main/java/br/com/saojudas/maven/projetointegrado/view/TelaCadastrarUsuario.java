@@ -73,7 +73,9 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		// configura o Container
 		container = getContentPane();
 		container.setLayout(new BorderLayout(20, 20));
-
+		
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
 		getRootPane().setDefaultButton(bSalvar);
@@ -321,7 +323,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		setComponentText();
 
 		// congifura o painel
-		setSize(500, 635);
+		setSize(650, 700);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);

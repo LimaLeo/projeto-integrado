@@ -13,9 +13,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -35,11 +32,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
 
-import com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOM;
-
 import br.com.saojudas.maven.projetointegrado.components.TableModelUsuario;
 import br.com.saojudas.maven.projetointegrado.control.UsuarioCtrl;
-import br.com.saojudas.maven.projetointegrado.model.TipoUsuario;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class TelaConsultarUsuario extends JFrame implements ActionListener {
@@ -82,6 +76,8 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		Container container = getContentPane();// container
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
+		
+		AplicaLookAndFeel.lookAndFeel();
 
 		// instancia botoes
 		bPesquisar = new JButton();
@@ -264,7 +260,7 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		setComponentText();
 
 		// congifura o painel
-		setSize(650, 450);
+		setSize(650, 550);
 		setLocation(350, 80);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);

@@ -49,10 +49,12 @@ public class TelaCadastrarEmpresa extends JDialog {
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// Configura o Container
 		container = getContentPane();
 		container.setLayout(new BorderLayout(20, 20));
-
+		
 		// Instancia e configura o componente Titulo
 		lTitulo = new JLabel();
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
@@ -184,7 +186,7 @@ public class TelaCadastrarEmpresa extends JDialog {
 		setComponentText();
 
 		// congifura o painel
-		setSize(500, 400);
+		setSize(650, 400);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);

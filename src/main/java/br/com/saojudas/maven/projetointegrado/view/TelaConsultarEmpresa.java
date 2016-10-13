@@ -71,6 +71,8 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// instancia icones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");
 		iRead = new ImageIcon("../image/ICONES-CRUD-01.jpg");
@@ -253,7 +255,7 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		setComponentText();
 
 		// congifura o painel
-		setSize(650, 450);
+		setSize(650, 550);
 		setLocation(350, 80);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);
