@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Usuario {
@@ -21,7 +22,7 @@ public class Usuario {
 	@Column(name = "cpf", length = 15, unique = true, nullable = false)
 	private String cpf;
 
-	@Column(name = "login", length = 100, nullable = false)
+	@Column(name = "login", length = 100, unique = true, nullable = false)
 	private String login;
 
 	@Column(name = "senha", length = 100, nullable = false)
@@ -39,15 +40,15 @@ public class Usuario {
 	@Column(name = "permissaoAlterarTemperatura", nullable = false)
 	private boolean permissaoAlterarTemperatura;
 
-	@Column(name = "empresa", length = 20, nullable = false)
-	private String empresa;
+	@ManyToOne
+	private Empresa empresa;
 
 	public Usuario() {
 
 	}
 
 	public Usuario(String nome, String cpf, String login, String senha, String horarioDeAcesso, TipoUsuario tipoUSuario,
-			boolean acessoLivre, boolean permissaoAlterarTemperatura, String empresa) {
+			boolean acessoLivre, boolean permissaoAlterarTemperatura, String cpnj) {
 		setNome(nome);
 		setCpf(cpf);
 		setLogin(login);
@@ -56,7 +57,6 @@ public class Usuario {
 		setTipoUsuario(tipoUSuario);
 		setAcessoLivre(acessoLivre);
 		setPermissaoAlterarTemperatura(permissaoAlterarTemperatura);
-		setEmpresa(empresa);
 	}
 
 	public Integer getId() {
@@ -162,23 +162,17 @@ public class Usuario {
 		this.permissaoAlterarTemperatura = permissaoAlterarTemperatura;
 	}
 
-	public String getEmpresa() {
+	public Empresa getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(String empresa) {
-		if (empresa == null) {
-			throw new RuntimeException("O empresa nao pode ser nulo!");
-		} else if (empresa.trim().equals("")) {
-			throw new RuntimeException("O empresa nao pode ser vazio!");
-		} else {
-			this.empresa = empresa;
-		}
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
 	}
 
 	public String toString() {
-		return "DADOS USUARIO"+ "\n" + getId() + "\n" + getNome() + "\n" + getCpf() + "\n" + getLogin() + "\n" + getSenha() + "\n"
-				+ getHorarioDeAcesso() + "\n" + getTipoUsuario() + "\n" + isAcessoLivre() + "\n"
+		return "DADOS USUARIO" + "\n" + getId() + "\n" + getNome() + "\n" + getCpf() + "\n" + getLogin() + "\n"
+				+ getSenha() + "\n" + getHorarioDeAcesso() + "\n" + getTipoUsuario() + "\n" + isAcessoLivre() + "\n"
 				+ isPermissaoAlterarTemperatura() + "\n" + getEmpresa();
 	}
 }

@@ -6,66 +6,67 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 import br.com.saojudas.maven.projetointegrado.util.JPAUtil;
 
-public class UsuarioDao {
+public class EmpresaDao {
 	private EntityManager em;
 
-	public void incluirUsuario(Usuario usuario) {
+	public void incluirEmpresa(Empresa empresa) {
 		em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
-		em.persist(usuario);
+		em.persist(empresa);
 		em.getTransaction().commit();
 		em.close();
 	}
 
-	public List<Usuario> consultarTodosUsuario() {
+	public List<Empresa> consultarTodasEmpresas() {
 		em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
-		Query query = em.createQuery("select u from Usuario u");
-		List<Usuario> usuarios = query.getResultList();
+		Query query = em.createQuery("select u from Empresa u");
+		List<Empresa> empresas = query.getResultList();
 		em.getTransaction().commit();
 		em.close();
-		return usuarios;
+		return empresas;
 	}
 
-	public Usuario consultaUsuario(String cpf) {
+	public Empresa consultaEmpresa(String cnpj) {
 		em = new JPAUtil().getEntityManager();
-		Usuario usuario = new Usuario();
+		Empresa empresa = new Empresa();
 		em.getTransaction().begin();
-		Query query = em.createQuery("select u from Usuario u where u.cpf=:pCpf");
-		query.setParameter("pCpf", cpf);
-		List<Usuario> usuarios = query.getResultList();
-		for(Usuario u : usuarios)
+		Query query = em.createQuery("select u from Empresa u where u.cnpj=:pCnpj");
+		query.setParameter("pCnpj", cnpj);
+		List<Empresa> empresas = query.getResultList();
+		for(Empresa u : empresas)
 		{	
-			usuario = u;
+			empresa = u;
 		}
 		em.getTransaction().commit();
 		em.close();
-		return usuario;
+		return empresa;
 	}
 	
-	public Usuario alteraUsuario(int id, Usuario usuarioAlterado) {
+	public Empresa alteraEmpresa(int id, Empresa empresaAlterada) {
 		em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
 		// ID do usuario existe no banco de dados
-		Usuario usuarioExistente = em.find(Usuario.class, id);
+		Empresa empresaExistente = em.find(Empresa.class, id);
 		 // commit antes da altera��o
 		em.getTransaction().commit();
 		em.getTransaction().begin();
-		em.merge(usuarioAlterado);
+		em.merge(empresaAlterada);
 		em.getTransaction().commit();
 		em.close();
-		return usuarioExistente;
+		return empresaExistente;
 	}
 	
 	public int size(){
 		
 		em = new JPAUtil().getEntityManager();
-		Usuario usuario = new Usuario();
+		Empresa empresa = new Empresa();
 		em.getTransaction().begin();
-		String consulta = "SELECT COUNT(a) FROM Usuario u";
+		String consulta = "SELECT COUNT(a) FROM Empresa u";
 		TypedQuery<Number> query = em.createQuery(consulta, Number.class);
 		Number result = query.getSingleResult();
 		

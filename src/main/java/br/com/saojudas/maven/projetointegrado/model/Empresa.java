@@ -36,7 +36,13 @@ public class Empresa {
 	@Column(name = "statusUsuario", length = 20, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	
+	@OneToMany(mappedBy="empresa")
+	private List<Usuario> usuarios;
 
+	public Empresa(){
+		
+	}
 	public Empresa(String cnpj, String razaoSocial, String horarioDeFuncionamento, Conjunto conjunto,
 			Double temperaturaMaximaArCondicionado, Status status) {
 		setCnpj(cnpj);
@@ -60,7 +66,13 @@ public class Empresa {
 	}
 
 	public void setRazaoSocial(String razaoSocial) {
-		this.razaoSocial = razaoSocial;
+		if (razaoSocial == null) {
+			throw new RuntimeException("A razão nao pode ser nulo!");
+		} else if (razaoSocial.trim().equals("")) {
+			throw new RuntimeException("A razão nao pode ser vazio!");
+		} else {
+			this.razaoSocial = razaoSocial;
+		}
 	}
 
 	public String getHorarioDeFuncionamento() {
@@ -69,6 +81,13 @@ public class Empresa {
 
 	public void setHorarioDeFuncionamento(String horarioDeFuncionamento) {
 		this.horarioDeFuncionamento = horarioDeFuncionamento;
+		if (horarioDeFuncionamento == null) {
+			throw new RuntimeException("O horario de funcionamento nao pode ser nulo!");
+		} else if (razaoSocial.trim().equals("")) {
+			throw new RuntimeException("O horario de funcionamento nao pode ser vazio!");
+		} else {
+			this.horarioDeFuncionamento = horarioDeFuncionamento;
+		}
 	}
 	
 	public List<Conjunto> getConjuntos() {
@@ -90,6 +109,14 @@ public class Empresa {
 
 	public void setTemperaturaMaximaArCondicionado(Double temperaturaMaximaArCondicionado) {
 		this.temperaturaMaximaArCondicionado = temperaturaMaximaArCondicionado;
+		if (temperaturaMaximaArCondicionado == null) {
+			throw new RuntimeException("O nome nao pode ser nulo!");
+		} else if (temperaturaMaximaArCondicionado < 0) {
+			throw new RuntimeException("O nome nao pode ser vazio!");
+		} else {
+			this.temperaturaMaximaArCondicionado = temperaturaMaximaArCondicionado;
+		}
+	
 	}
 
 	public Integer getId() {
