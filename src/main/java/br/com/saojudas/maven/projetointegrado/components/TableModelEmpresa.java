@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
+import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class TableModelEmpresa extends AbstractTableModel {
 	// atributos
@@ -19,6 +20,18 @@ public class TableModelEmpresa extends AbstractTableModel {
 	public void addEmpresa(Empresa empresa) {
 		alEmpresa.add(empresa);
 		fireTableDataChanged();
+	}
+	
+	public void removeUsuario(int rowIndex) {
+		alEmpresa.remove(rowIndex);
+		fireTableDataChanged();
+	}
+	
+	public Empresa carregaEmpresa(int rowIndex) {
+		Empresa empresa = new Empresa();
+		empresa = alEmpresa.get(rowIndex);
+		
+		return empresa;
 	}
 	
 	public int getColumnCount()
@@ -59,6 +72,10 @@ public class TableModelEmpresa extends AbstractTableModel {
 
 	public void setColunas(String[] colunas) {
 		this.colunas = colunas;
+	}
+	
+	public void setAlEmpresa(ArrayList<Empresa> empresas) {
+		alEmpresa = empresas;
 	}
 	
 }

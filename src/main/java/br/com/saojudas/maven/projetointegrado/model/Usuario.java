@@ -22,7 +22,7 @@ public class Usuario {
 	@Column(name = "cpf", length = 15, unique = true, nullable = false)
 	private String cpf;
 
-	@Column(name = "login", length = 100, unique = true, nullable = false)
+	@Column(name = "login", length = 100, nullable = false)
 	private String login;
 
 	@Column(name = "senha", length = 100, nullable = false)
@@ -41,14 +41,14 @@ public class Usuario {
 	private boolean permissaoAlterarTemperatura;
 
 	@ManyToOne
-	private Empresa empresa;
+	private Empresa empresa_usuario;
 
 	public Usuario() {
 
 	}
-
+	
 	public Usuario(String nome, String cpf, String login, String senha, String horarioDeAcesso, TipoUsuario tipoUSuario,
-			boolean acessoLivre, boolean permissaoAlterarTemperatura, String cpnj) {
+			boolean acessoLivre, boolean permissaoAlterarTemperatura) {
 		setNome(nome);
 		setCpf(cpf);
 		setLogin(login);
@@ -57,6 +57,19 @@ public class Usuario {
 		setTipoUsuario(tipoUSuario);
 		setAcessoLivre(acessoLivre);
 		setPermissaoAlterarTemperatura(permissaoAlterarTemperatura);
+	}
+
+	public Usuario(String nome, String cpf, String login, String senha, String horarioDeAcesso, TipoUsuario tipoUSuario,
+			boolean acessoLivre, boolean permissaoAlterarTemperatura, Empresa empresa_usuario) {
+		setNome(nome);
+		setCpf(cpf);
+		setLogin(login);
+		setSenha(senha);
+		setHorarioDeAcesso(horarioDeAcesso);
+		setTipoUsuario(tipoUSuario);
+		setAcessoLivre(acessoLivre);
+		setPermissaoAlterarTemperatura(permissaoAlterarTemperatura);
+		setEmpresa(empresa_usuario);
 	}
 
 	public Integer getId() {
@@ -163,16 +176,17 @@ public class Usuario {
 	}
 
 	public Empresa getEmpresa() {
-		return empresa;
+		return empresa_usuario;
 	}
-
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
+	
+	public void setEmpresa(Empresa empresa_usuario) {
+		this.empresa_usuario = empresa_usuario;
 	}
+	
 
 	public String toString() {
-		return "DADOS USUARIO" + "\n" + getId() + "\n" + getNome() + "\n" + getCpf() + "\n" + getLogin() + "\n"
-				+ getSenha() + "\n" + getHorarioDeAcesso() + "\n" + getTipoUsuario() + "\n" + isAcessoLivre() + "\n"
-				+ isPermissaoAlterarTemperatura() + "\n" + getEmpresa();
+		return "DADOS USUARIO"+ "\n" + getId() + "\n" + getNome() + "\n" + getCpf() + "\n" + getLogin() + "\n" + getSenha() + "\n"
+				+ getHorarioDeAcesso() + "\n" + getTipoUsuario() + "\n" + isAcessoLivre() + "\n"
+				+ isPermissaoAlterarTemperatura() + "\n" + getEmpresa().getCnpj();
 	}
 }

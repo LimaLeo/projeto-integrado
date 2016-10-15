@@ -30,16 +30,17 @@ public class Conjunto {
 	private Status status;
 
 	@ManyToOne
-	private Empresa empresa;
+	private Empresa empresa_conjunto;
 
 	public Conjunto() {
-		this("Sem bloco", 0, Status.ATIVO);
+		this("Sem bloco", 0, Status.ATIVO, null);
 	}
 
-	public Conjunto(String bloco, double temperaturaMedia, Status status) {
+	public Conjunto(String bloco, double temperaturaMedia, Status status,Empresa empresa_conjunto) {
 		setBloco(bloco);
 		setTemperaturaMedia(temperaturaMedia);
 		setStatusConjunto(status.ATIVO);
+		setEmpresa(empresa_conjunto);
 	}
 
 	public String getBloco() {
@@ -75,11 +76,11 @@ public class Conjunto {
 	}
 
 	public Empresa getEmpresa() {
-		return empresa;
+		return empresa_conjunto;
 	}
 
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
+	public void setEmpresa(Empresa empresa_conjunto) {
+		this.empresa_conjunto = empresa_conjunto;
 	}
 	
 	

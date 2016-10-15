@@ -43,7 +43,7 @@ public class ConjuntoDao {
 		em = new JPAUtil().getEntityManager();
 		Conjunto conjunto = new Conjunto();
 		em.getTransaction().begin();
-		String consulta = "SELECT COUNT(a) FROM Conjunto u";
+		String consulta = "SELECT COUNT(u) FROM Conjunto u";
 		TypedQuery<Number> query = em.createQuery(consulta, Number.class);
 		Number result = query.getSingleResult();
 		

@@ -27,9 +27,6 @@ public class Empresa {
 	@Column(name = "horarioDeFuncionamento", length = 20, nullable = false)
 	private String horarioDeFuncionamento;
 	
-	@OneToMany(mappedBy= "empresa")
-	private List<Conjunto> conjuntos;
-	
 	@Column(name = "temperaturaMaximaArCondicionado", length = 20, nullable = false)
 	private Double temperaturaMaximaArCondicionado;
 	
@@ -37,18 +34,20 @@ public class Empresa {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
-	@OneToMany(mappedBy="empresa")
+	@OneToMany(mappedBy= "empresa_conjunto")
+	private List<Conjunto> conjuntos;
+	
+	@OneToMany(mappedBy="empresa_usuario")
 	private List<Usuario> usuarios;
 
 	public Empresa(){
 		
 	}
-	public Empresa(String cnpj, String razaoSocial, String horarioDeFuncionamento, Conjunto conjunto,
+	public Empresa(String cnpj, String razaoSocial, String horarioDeFuncionamento,
 			Double temperaturaMaximaArCondicionado, Status status) {
 		setCnpj(cnpj);
 		setRazaoSocial(razaoSocial);
 		setHorarioDeFuncionamento(horarioDeFuncionamento);
-		addConjunto(conjunto);
 		setTemperaturaMaximaArCondicionado(temperaturaMaximaArCondicionado);
 		setStatusEmpresa(status);
 	}
@@ -116,7 +115,6 @@ public class Empresa {
 		} else {
 			this.temperaturaMaximaArCondicionado = temperaturaMaximaArCondicionado;
 		}
-	
 	}
 
 	public Integer getId() {

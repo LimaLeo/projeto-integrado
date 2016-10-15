@@ -29,6 +29,8 @@ import javax.swing.text.MaskFormatter;
 
 import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
+import br.com.saojudas.maven.projetointegrado.dao.EmpresaDao;
+import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.TipoUsuario;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
@@ -41,7 +43,11 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 	private JRadioButton rbSindico, rbAtendente, rbFuncionario, rbSimPerm, rbNaoPerm, rbSimLivre, rbNaoLivre;
 	private JButton bSalvar, bLimpar;
 	private JFormattedTextField ftfCpf, ftfCnpj, ftfHorario;
-
+	
+	// atributo de empresa dao
+	EmpresaDao empresaDao;
+	Empresa empresa;
+	
 	// atributo mascara
 	MaskFormatter mascaraCpf = null, mascaraCnpj = null, mascaraHorario;
 
@@ -167,7 +173,11 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		pNorte.add(lTitulo);
 		pCentro.add(BorderLayout.NORTH, pDadosUsuario);
 		pCentro.add(BorderLayout.CENTER, pDadosLogin);
-
+		
+		// instancia empresa dao
+		empresaDao = new EmpresaDao();
+		empresa = new Empresa();
+		
 		// instancia componente de criacao de login
 		application = new CreateLoginFile();
 
@@ -317,7 +327,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 
 		System.out.println(estadoTela);
 
-		alteraTipoDeUsuario(usuario);
+		alteraTipoDeTela(usuario);
 
 		// metodo que atualiza o texto de todos os componentes
 		setComponentText();
@@ -341,13 +351,12 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					if (rbFuncionario.isSelected()) {
 						tipoUsuario = TipoUsuario.FUNCIONARIO;
 					}
-
+					empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
 					usuario = new Usuario(tfNome.getText(),
 							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
 							new String(pfSenha.getPassword()).trim(),
-							ftfHorario.getText().replace("_", "").replace(":", "").replace("a", ""), tipoUsuario,
-							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false,
-							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+							ftfHorario.getText().replace("_", ""), tipoUsuario,
+							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
 
 					String login = tfLogin.getText().toLowerCase();
 					String senha = new String(pfSenha.getPassword()).trim();
@@ -391,13 +400,12 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					if (rbFuncionario.isSelected()) {
 						tipoUsuario = TipoUsuario.FUNCIONARIO;
 					}
-
+					empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
 					usuario = new Usuario(tfNome.getText(),
 							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
 							new String(pfSenha.getPassword()).trim(),
-							ftfHorario.getText().replace("_", "").replace(":", "").replace("a", ""), tipoUsuario,
-							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false,
-							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+							ftfHorario.getText().replace("_", ""), tipoUsuario,
+							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
 					
 					dispose();
 				} catch (Exception f) {
@@ -456,7 +464,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		return usuario;
 	}
 
-	public void alteraTipoDeUsuario(Usuario usuario) {
+	public void alteraTipoDeTela(Usuario usuario) {
 		if (estadoTela == EstadoTela.CONSULTAR) {
 			tfNome.setText(usuario.getNome());
 			tfLogin.setText(usuario.getLogin());

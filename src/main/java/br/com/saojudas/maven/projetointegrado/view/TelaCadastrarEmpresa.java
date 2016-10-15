@@ -7,7 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.util.Locale;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -16,13 +17,17 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
-public class TelaCadastrarEmpresa extends JDialog {
+import br.com.saojudas.maven.projetointegrado.model.Empresa;
+import br.com.saojudas.maven.projetointegrado.model.Status;
+
+public class TelaCadastrarEmpresa extends JDialog  implements ActionListener{
 	// componentes formul�rio
 	private JLabel lTitulo, lCnpj, lRazaoSocial, lConjuntos, lHorario, lTemperaturaMax;
 	private JTextField tfRazaoSocial;
@@ -42,19 +47,25 @@ public class TelaCadastrarEmpresa extends JDialog {
 	// atributo para manipulacao de idiomas
 	private ResourceBundle bn = TelaPrincipal.bn;
 
-	public TelaCadastrarEmpresa(JFrame fr) {
+	// atributo usuario
+	private static Empresa empresa;
+
+	// atributo status da tela
+	static EstadoTela estadoTela;
+
+	public TelaCadastrarEmpresa(JFrame fr, Empresa empresa) {
 		// invoca o metodo construtor da superclasse
 		super(fr, true);
-		
+
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
 		AplicaLookAndFeel.lookAndFeel();
-		
+
 		// Configura o Container
 		container = getContentPane();
 		container.setLayout(new BorderLayout(20, 20));
-		
+
 		// Instancia e configura o componente Titulo
 		lTitulo = new JLabel();
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
@@ -72,7 +83,7 @@ public class TelaCadastrarEmpresa extends JDialog {
 
 		// instancia mascara
 		try {
-			mascaraCnpj = new MaskFormatter("###.###.###/####-##");
+			mascaraCnpj = new MaskFormatter("##.###.###/####-##");
 			mascaraCnpj.setPlaceholderCharacter('_');
 
 			mascaraHorario = new MaskFormatter("##:## a ##:##");
@@ -95,6 +106,9 @@ public class TelaCadastrarEmpresa extends JDialog {
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
 		bLimpar = new JButton();
+		
+		bSalvar.addActionListener(this);
+		bLimpar.addActionListener(this);
 
 		// instancia paineis
 		pNorte = new JPanel(new GridLayout(1, 1, 5, 5));
@@ -181,6 +195,10 @@ public class TelaCadastrarEmpresa extends JDialog {
 		container.add(BorderLayout.NORTH, pNorte);
 		container.add(BorderLayout.CENTER, pCentro);
 		container.add(BorderLayout.SOUTH, pSul);
+		
+		estadoTela = TelaConsultarEmpresa.alteraEstadoTela;
+
+		alteraTipoDeTela(empresa);
 
 		// metodo que atualiza o texto de todos os componentes
 		setComponentText();
@@ -190,6 +208,46 @@ public class TelaCadastrarEmpresa extends JDialog {
 		setLocationRelativeTo(null);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == bSalvar) {
+			if (estadoTela == EstadoTela.CADASTRAR) {
+				try {
+					empresa = new Empresa(
+							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
+							tfRazaoSocial.getText(),
+							ftfHorario.getText().replace("_", ""),
+							Double.parseDouble(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
+							Status.ATIVO);
+					dispose();
+				} catch (Exception f) {
+					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+				}
+			} else if (estadoTela == EstadoTela.ALTERAR)
+			{
+				try {
+					empresa = new Empresa(
+							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
+							tfRazaoSocial.getText(),
+							ftfHorario.getText().replace("_", ""),
+							Double.parseDouble(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
+							Status.ATIVO);
+					
+					dispose();
+				} catch (Exception f) {
+					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+
+		if (e.getSource() == bLimpar)
+		{
+			ftfCnpj.setText("");
+			tfRazaoSocial.setText("");
+			ftfHorario.setText("");
+			ftfTemperaturaMaxima.setText("");
+		}
 	}
 
 	public void setComponentText() {
@@ -202,6 +260,47 @@ public class TelaCadastrarEmpresa extends JDialog {
 		bSalvar.setText(bn.getString("telaCadastrarEmpresa.button.salvar"));
 		bLimpar.setText(bn.getString("telaCadastrarEmpresa.button.limpar"));
 		setTitle(bn.getString("telaCadastrarEmpresa.label.titulo"));
+	}
+
+	static Empresa cadastrarEmpresa(JFrame fr) {
+		TelaCadastrarEmpresa cadastrarUsuario = new TelaCadastrarEmpresa(fr, null);
+		return empresa;
+	}
+
+	static Empresa alteraEmpresa(JFrame fr, Empresa empresaAlterada) {
+		TelaCadastrarEmpresa cadastrarEmpresa = new TelaCadastrarEmpresa(fr, empresaAlterada);
+		return empresa;
+	}
+
+	public void alteraTipoDeTela(Empresa empresa) {
+		if (estadoTela == EstadoTela.CONSULTAR) {
+			ftfCnpj.setText(empresa.getCnpj());
+			tfRazaoSocial.setText(empresa.getRazaoSocial());
+			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
+			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado().toString());
+			
+			// desativa a edição
+			ftfCnpj.setEnabled(false);
+			tfRazaoSocial.setEnabled(false);
+			ftfHorario.setEnabled(false);
+			ftfTemperaturaMaxima.setEnabled(false);
+	
+		} else if (estadoTela == EstadoTela.CADASTRAR) {
+
+		} else {
+			ftfCnpj.setText(empresa.getCnpj());
+			tfRazaoSocial.setText(empresa.getRazaoSocial());
+			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
+			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado().toString());
+
+			// desativa a edição
+			bSalvar.setEnabled(true);
+			bLimpar.setEnabled(true);
+			ftfCnpj.setEnabled(true);
+			ftfHorario.setEnabled(true);
+			tfRazaoSocial.setEnabled(true);
+			ftfTemperaturaMaxima.setEnabled(true);
+		}
 	}
 
 }
