@@ -24,6 +24,12 @@ public class UsuarioCtrl {
 		return usuario;
 	}
 	
+	public Usuario consultaUsuarioLogin(String login)
+	{	
+		Usuario usuario = dao.consultaUsuarioLogin(login);
+		return usuario;
+	}
+	
 	public Usuario alteraUsuario(int id, Usuario usuarioAlterado)
 	{
 		Usuario usuario = dao.alteraUsuario(id, usuarioAlterado);

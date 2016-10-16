@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -22,6 +23,10 @@ import javax.swing.SwingConstants;
 
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
 import br.com.saojudas.maven.projetointegrado.components.ReadLoginFile;
+import br.com.saojudas.maven.projetointegrado.control.AcessoCtrl;
+import br.com.saojudas.maven.projetointegrado.control.UsuarioCtrl;
+import br.com.saojudas.maven.projetointegrado.model.Acesso;
+import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class TelaAcessarCatraca extends JDialog implements ActionListener
 {
@@ -40,9 +45,6 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 	// atributo de login
 	private ReadLoginFile application;
 
-	// atributo para realizar login
-	private static boolean statusLogin;
-
 	public TelaAcessarCatraca(JFrame fr)
 	{
 		// invoca o m�todo construtor da superclasse
@@ -52,7 +54,7 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 		container.setLayout(new BorderLayout());
 
 		AplicaLookAndFeel.lookAndFeel();
-		
+
 		// instancia itens de formulario
 		bEntrar = new JButton();
 		getRootPane().setDefaultButton(bEntrar);
@@ -174,13 +176,37 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 			}
 
 			// verifica se o login e a senha est�o corretos
-			statusLogin = application.validaDadosLogin(login, sSenhaCifrada);
-			application.closeFile();
-			dispose();
+			if (application.validaDadosLogin(login, sSenhaCifrada))
+			{
+				application.closeFile();
+			
+				//Inserir dados de acesso no Banco
+				//Buscar usuario no banco
+				UsuarioCtrl usuarioCtrl = new UsuarioCtrl();				
+				Usuario usuario = usuarioCtrl.consultaUsuarioLogin(login);
+				
+				//Cria o acesso
+				Acesso acesso = new Acesso();
+				//adiciona o usuario ao acesso
+				acesso.setUsuario(usuario);
+				acesso.setEntrada(new Date());
+				
+				//Cadastra no Banco
+				AcessoCtrl acessoCtrl = new AcessoCtrl();
+				acessoCtrl.incluirAcesso(acesso);				
+				
+				dispose();
+			}
+			else
+			{
+				loginJText.setText("");
+				senhaJText.setText("");				
+			}
+
 		}
 		else if (e.getSource() == bCancelar)
-		{	
-			dispose();			
+		{
+			dispose();
 		}
 	}
 
@@ -193,12 +219,6 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 		bCancelar.setText(bn.getString("telaAcessarCatraca.botao.cancelar"));
 
 		setTitle(bn.getString("telaAcessarCatraca.title"));
-	}
-
-	static boolean login(JFrame fr)
-	{
-		TelaLogin login = new TelaLogin(fr);
-		return statusLogin;
 	}
 
 }

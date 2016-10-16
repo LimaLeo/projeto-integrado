@@ -46,6 +46,22 @@ public class UsuarioDao {
 		return usuario;
 	}
 	
+	public Usuario consultaUsuarioLogin(String login) {
+		em = new JPAUtil().getEntityManager();
+		Usuario usuario = new Usuario();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Usuario u where u.login=:pLogin");
+		query.setParameter("pLogin", login);
+		List<Usuario> usuarios = query.getResultList();
+		for(Usuario u : usuarios)
+		{	
+			usuario = u;
+		}
+		em.getTransaction().commit();
+		em.close();
+		return usuario;
+	}
+	
 	public Usuario alteraUsuario(int id, Usuario usuarioAlterado) {
 		em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();

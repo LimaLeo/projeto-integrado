@@ -17,4 +17,8 @@ public class AcessoCtrl {
 		List<Acesso> acessos = dao.consultarTodosAcessos();
 		return acessos;
 	}
+	
+	
+	
+	
 }
