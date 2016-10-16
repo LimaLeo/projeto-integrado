@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
@@ -35,8 +36,8 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
 
 import br.com.saojudas.maven.projetointegrado.components.TableModelAcesso;
-import br.com.saojudas.maven.projetointegrado.components.TableModelEmpresa;
-import br.com.saojudas.maven.projetointegrado.components.TableModelUsuario;
+import br.com.saojudas.maven.projetointegrado.control.AcessoCtrl;
+import br.com.saojudas.maven.projetointegrado.model.Acesso;
 
 public class TelaConsultarAcesso extends JDialog implements ActionListener {
 	// atributos para formulario
@@ -46,6 +47,9 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 	private ButtonGroup bgTipoUsuario;
 	private JRadioButton rbSindico, rbAtendente;
 	private JFormattedTextField ftfData;
+
+	// atributo classe controller
+	private AcessoCtrl acessoCtrl;
 
 	// atributo mascara
 	MaskFormatter mascaraData = null;
@@ -69,6 +73,8 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 	private JScrollPane spEmpresa;
 	private TableModelAcesso modelo;
 
+	private ArrayList<Acesso> acessos;
+
 	public TelaConsultarAcesso(JFrame fr) {
 		// invoca o metodo construtor da superclasse
 		super(fr, true);
@@ -80,7 +86,7 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		// layout border
 
 		AplicaLookAndFeel.lookAndFeel();
-		
+
 		// instancia �cones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");
 		iRead = new ImageIcon("../image/ICONES-CRUD-01.jpg");
@@ -154,9 +160,16 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		// instancia modelo
 		modelo = new TableModelAcesso();
 		String[] colunas = { bn.getString("telaConsulta.columnname.nome"), bn.getString("telaConsulta.columnname.cpf"),
-				bn.getString("telaConsulta.columnname.empresa"), bn.getString("telaConsulta.columnname.data"),
-				bn.getString("telaConsulta.columnname.entrada"), bn.getString("telaConsulta.columnname.saida") };
+				bn.getString("telaConsulta.columnname.empresa"), bn.getString("telaConsulta.columnname.entrada"),
+				bn.getString("telaConsulta.columnname.saida") };
 		modelo.setColunas(colunas);
+
+		// instancia e atribui os acessos cadastrados no banco
+		acessoCtrl = new AcessoCtrl();
+		acessos = (ArrayList) acessoCtrl.consultarTodosAcessos();
+
+		// carrega usuarios atuais
+		modelo.setAlAcesso(acessos);
 
 		// instancia a table e atribui ao modelo criado
 		tTabela = new JTable(modelo);

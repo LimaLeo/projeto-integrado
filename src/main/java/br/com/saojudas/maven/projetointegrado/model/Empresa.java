@@ -143,7 +143,6 @@ public class Empresa {
 	}
 
 	public String toString() {
-		return "DADOS EMPRESA" + "\n" + getId() + "\n" + getRazaoSocial() + "\n" + getCnpj() + "\n"
-				+ getHorarioDeFuncionamento() + "\n" + getTemperaturaMaximaArCondicionado() + "\n" + getStatus();
+		return getRazaoSocial();
 	}
 }

@@ -10,6 +10,7 @@
 		<class>br.com.saojudas.maven.projetointegrado.model.Usuario</class>
 		<class>br.com.saojudas.maven.projetointegrado.model.Conjunto</class>
 		<class>br.com.saojudas.maven.projetointegrado.model.Empresa</class>
+		<class>br.com.saojudas.maven.projetointegrado.model.Acesso</class>
 		<properties>
 			<!-- Propriedades JDBC -->
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
