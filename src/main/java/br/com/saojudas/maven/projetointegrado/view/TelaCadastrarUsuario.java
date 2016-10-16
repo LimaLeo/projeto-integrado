@@ -470,7 +470,10 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 			tfLogin.setText(usuario.getLogin());
 			pfSenha.setText(usuario.getSenha());
 			ftfCpf.setText(usuario.getCpf());
-			ftfCnpj.setText(usuario.getEmpresa().getCnpj());
+			if(usuario.getEmpresa() != null)
+			{
+				ftfCnpj.setText(usuario.getEmpresa().getCnpj());	
+			}
 			ftfHorario.setText(usuario.getHorarioDeAcesso());
 
 			// desativa a edição
@@ -496,7 +499,10 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 			tfLogin.setText(usuario.getLogin());
 			pfSenha.setText(usuario.getSenha());
 			ftfCpf.setText(usuario.getCpf());
-			ftfCnpj.setText(usuario.getEmpresa().getCnpj());
+			if(usuario.getEmpresa() != null)
+			{
+				ftfCnpj.setText(usuario.getEmpresa().getCnpj());	
+			}
 			ftfHorario.setText(usuario.getHorarioDeAcesso());
 
 			// desativa a edição

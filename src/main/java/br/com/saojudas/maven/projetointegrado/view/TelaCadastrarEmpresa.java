@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -24,6 +25,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
+import br.com.saojudas.maven.projetointegrado.control.ConjuntoCtrl;
+import br.com.saojudas.maven.projetointegrado.model.Conjunto;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.Status;
 
@@ -101,8 +104,13 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		ftfTemperaturaMaxima = new JFormattedTextField(mascaraTemperaturaMaxima);
 
 		cbConjuntos = new JComboBox<String>();
-		
-		cbConjuntos.addItem("Conjunto 1");
+
+		// List<Conjunto> cojuntos = conjuntoCtrl.();
+		// for(Conjunto c: conjuntos)
+		// {
+		// cbConjuntos.addItem(c.getBloco());
+		// }
+		// cbConjuntos.addItem("Conjunto 1");
 
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();

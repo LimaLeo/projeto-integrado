@@ -37,7 +37,6 @@ public class PopulaConjunto {
 		Conjunto conjunto8 = new Conjunto("H", 24, Status.ATIVO, empresa8);
 		Conjunto conjunto9 = new Conjunto("I", 20, Status.ATIVO, empresa9);
 		Conjunto conjunto10 = new Conjunto("J", 20, Status.ATIVO, empresa10);
-		Conjunto conjunto11 = new Conjunto("J", 21, Status.ATIVO,empresa1);
 		
 		manager.persist(conjunto1);
 		manager.persist(conjunto2);
@@ -49,7 +48,6 @@ public class PopulaConjunto {
 		manager.persist(conjunto8);
 		manager.persist(conjunto9);
 		manager.persist(conjunto10);
-		manager.persist(conjunto11);
 		
 		manager.getTransaction().commit();
 

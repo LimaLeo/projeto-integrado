@@ -14,7 +14,6 @@ public class ConjuntoCtrl {
 		return conjuntos;
 	}
 	
-	
 	// public Usuario alteraConjunto(int id, Conjunto cojuntoAlterado)
 	// {
 	// Conjunto conjunto = dao.alteraConjunto(id, cojuntoAlterado);
