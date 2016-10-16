@@ -283,6 +283,7 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 			try {
 				alteraEstadoTela = EstadoTela.CADASTRAR;
 				Usuario usuario = TelaCadastrarUsuario.cadastrarUsuario(this);
+				
 				usuarioCtrl.incluirUsuario(usuario);
 
 				// adiciona usuario na lista de usuarios

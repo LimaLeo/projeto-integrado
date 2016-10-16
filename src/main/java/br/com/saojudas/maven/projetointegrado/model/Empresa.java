@@ -15,36 +15,37 @@ import javax.persistence.OneToMany;
 public class Empresa {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(name = "cnpj", length = 20, unique = true, nullable = false)
 	private String cnpj;
-	
+
 	@Column(name = "razaoSocial", length = 100, nullable = false)
 	private String razaoSocial;
-	
+
 	@Column(name = "horarioDeFuncionamento", length = 20, nullable = false)
 	private String horarioDeFuncionamento;
-	
+
 	@Column(name = "temperaturaMaximaArCondicionado", length = 20, nullable = false)
-	private Double temperaturaMaximaArCondicionado;
-	
+	private int temperaturaMaximaArCondicionado;
+
 	@Column(name = "statusUsuario", length = 20, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
-	@OneToMany(mappedBy= "empresa_conjunto")
+
+	@OneToMany(mappedBy = "empresa_conjunto")
 	private List<Conjunto> conjuntos;
-	
-	@OneToMany(mappedBy="empresa_usuario")
+
+	@OneToMany(mappedBy = "empresa_usuario")
 	private List<Usuario> usuarios;
 
-	public Empresa(){
-		
+	public Empresa() {
+
 	}
-	public Empresa(String cnpj, String razaoSocial, String horarioDeFuncionamento,
-			Double temperaturaMaximaArCondicionado, Status status) {
+
+	public Empresa(String cnpj, String razaoSocial, String horarioDeFuncionamento, int temperaturaMaximaArCondicionado,
+			Status status) {
 		setCnpj(cnpj);
 		setRazaoSocial(razaoSocial);
 		setHorarioDeFuncionamento(horarioDeFuncionamento);
@@ -88,7 +89,7 @@ public class Empresa {
 			this.horarioDeFuncionamento = horarioDeFuncionamento;
 		}
 	}
-	
+
 	public List<Conjunto> getConjuntos() {
 		return conjuntos;
 	}
@@ -96,21 +97,17 @@ public class Empresa {
 	public void setConjuntos(List<Conjunto> conjuntos) {
 		this.conjuntos = conjuntos;
 	}
-	
-	public void addConjunto(Conjunto conjunto)
-	{
+
+	public void addConjunto(Conjunto conjunto) {
 		conjuntos.add(conjunto);
 	}
 
-	public Double getTemperaturaMaximaArCondicionado() {
+	public int getTemperaturaMaximaArCondicionado() {
 		return temperaturaMaximaArCondicionado;
 	}
 
-	public void setTemperaturaMaximaArCondicionado(Double temperaturaMaximaArCondicionado) {
-		this.temperaturaMaximaArCondicionado = temperaturaMaximaArCondicionado;
-		if (temperaturaMaximaArCondicionado == null) {
-			throw new RuntimeException("O nome nao pode ser nulo!");
-		} else if (temperaturaMaximaArCondicionado < 0) {
+	public void setTemperaturaMaximaArCondicionado(int temperaturaMaximaArCondicionado) {
+		if (temperaturaMaximaArCondicionado < 0) {
 			throw new RuntimeException("O nome nao pode ser vazio!");
 		} else {
 			this.temperaturaMaximaArCondicionado = temperaturaMaximaArCondicionado;
@@ -131,5 +128,22 @@ public class Empresa {
 
 	public void setStatusEmpresa(Status status) {
 		this.status = status;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public String toString() {
+		return "DADOS EMPRESA" + "\n" + getId() + "\n" + getRazaoSocial() + "\n" + getCnpj() + "\n"
+				+ getHorarioDeFuncionamento() + "\n" + getTemperaturaMaximaArCondicionado() + "\n" + getStatus();
 	}
 }

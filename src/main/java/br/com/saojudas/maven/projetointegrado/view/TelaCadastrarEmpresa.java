@@ -218,7 +218,7 @@ public class TelaCadastrarEmpresa extends JDialog  implements ActionListener{
 							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
 							tfRazaoSocial.getText(),
 							ftfHorario.getText().replace("_", ""),
-							Double.parseDouble(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
+							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
 					dispose();
 				} catch (Exception f) {
@@ -231,7 +231,7 @@ public class TelaCadastrarEmpresa extends JDialog  implements ActionListener{
 							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
 							tfRazaoSocial.getText(),
 							ftfHorario.getText().replace("_", ""),
-							Double.parseDouble(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
+							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
 					
 					dispose();
@@ -277,7 +277,7 @@ public class TelaCadastrarEmpresa extends JDialog  implements ActionListener{
 			ftfCnpj.setText(empresa.getCnpj());
 			tfRazaoSocial.setText(empresa.getRazaoSocial());
 			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
-			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado().toString());
+			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado() + "");
 			
 			// desativa a edição
 			ftfCnpj.setEnabled(false);
@@ -291,7 +291,7 @@ public class TelaCadastrarEmpresa extends JDialog  implements ActionListener{
 			ftfCnpj.setText(empresa.getCnpj());
 			tfRazaoSocial.setText(empresa.getRazaoSocial());
 			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
-			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado().toString());
+			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado() + "");
 
 			// desativa a edição
 			bSalvar.setEnabled(true);

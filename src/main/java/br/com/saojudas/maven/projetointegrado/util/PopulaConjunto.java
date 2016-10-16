@@ -28,16 +28,16 @@ public class PopulaConjunto {
 		Empresa empresa10 = manager.find(Empresa.class,10);
 		
 		Conjunto conjunto1 = new Conjunto("A", 23, Status.ATIVO, empresa1);
-		Conjunto conjunto2 = new Conjunto("B", 24.8, Status.ATIVO, empresa2);
-		Conjunto conjunto3 = new Conjunto("C", 21.7, Status.ATIVO, empresa3);
-		Conjunto conjunto4 = new Conjunto("D", 17.5, Status.ATIVO, empresa4);
-		Conjunto conjunto5 = new Conjunto("E", 18.9, Status.ATIVO, empresa5);
-		Conjunto conjunto6 = new Conjunto("F", 21.3, Status.ATIVO, empresa6);
-		Conjunto conjunto7 = new Conjunto("G", 22.7, Status.ATIVO, empresa7);
-		Conjunto conjunto8 = new Conjunto("H", 24.9, Status.ATIVO, empresa8);
-		Conjunto conjunto9 = new Conjunto("I", 20.5, Status.ATIVO, empresa9);
-		Conjunto conjunto10 = new Conjunto("J", 20.1, Status.ATIVO, empresa10);
-		Conjunto conjunto11 = new Conjunto("J", 21.1, Status.ATIVO,empresa1);
+		Conjunto conjunto2 = new Conjunto("B", 24, Status.ATIVO, empresa2);
+		Conjunto conjunto3 = new Conjunto("C", 21, Status.ATIVO, empresa3);
+		Conjunto conjunto4 = new Conjunto("D", 17, Status.ATIVO, empresa4);
+		Conjunto conjunto5 = new Conjunto("E", 18, Status.ATIVO, empresa5);
+		Conjunto conjunto6 = new Conjunto("F", 21, Status.ATIVO, empresa6);
+		Conjunto conjunto7 = new Conjunto("G", 22, Status.ATIVO, empresa7);
+		Conjunto conjunto8 = new Conjunto("H", 24, Status.ATIVO, empresa8);
+		Conjunto conjunto9 = new Conjunto("I", 20, Status.ATIVO, empresa9);
+		Conjunto conjunto10 = new Conjunto("J", 20, Status.ATIVO, empresa10);
+		Conjunto conjunto11 = new Conjunto("J", 21, Status.ATIVO,empresa1);
 		
 		manager.persist(conjunto1);
 		manager.persist(conjunto2);
