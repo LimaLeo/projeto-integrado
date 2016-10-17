@@ -16,7 +16,7 @@
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/controle_predial" />
 			<property name="javax.persistence.jdbc.user" value="alunos" />
-			<property name="javax.persistence.jdbc.password" value="alunos" />
+			<property name="javax.persistence.jdbc.password" value="usjt@but2010" />
 			<!-- Configurações específicas do Hibernate -->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />

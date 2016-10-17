@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -16,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -45,10 +48,14 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 	// atributo de login
 	private ReadLoginFile application;
 
-	public TelaAcessarCatraca(JFrame fr)
+	// modo da tela, 1 - Entrar, 2 - Sair
+	private int modo;
+
+	public TelaAcessarCatraca(JFrame fr, int modo)
 	{
 		// invoca o m�todo construtor da superclasse
 		super(fr, true);
+		this.modo = modo;
 
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
@@ -121,9 +128,6 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 		container.add(BorderLayout.NORTH, header);
 		container.add(BorderLayout.CENTER, content);
 
-		application = new ReadLoginFile();
-		application.openFile();
-
 		// Registro no listener dos objetos controlados
 		bEntrar.addActionListener(this);
 		bCancelar.addActionListener(this);
@@ -144,6 +148,9 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 	{
 		if (e.getSource() == bEntrar)
 		{
+			application = new ReadLoginFile();
+			application.openFile();
+
 			String login = loginJText.getText();
 			String senha = new String(senhaJText.getPassword()).trim();
 
@@ -179,28 +186,100 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 			if (application.validaDadosLogin(login, sSenhaCifrada))
 			{
 				application.closeFile();
-			
-				//Inserir dados de acesso no Banco
-				//Buscar usuario no banco
-				UsuarioCtrl usuarioCtrl = new UsuarioCtrl();				
+
+				// Inserir dados de acesso no Banco
+				// Buscar usuario no banco
+				UsuarioCtrl usuarioCtrl = new UsuarioCtrl();
 				Usuario usuario = usuarioCtrl.consultaUsuarioLogin(login);
-				
-				//Cria o acesso
-				Acesso acesso = new Acesso();
-				//adiciona o usuario ao acesso
-				acesso.setUsuario(usuario);
-				acesso.setEntrada(new Date());
-				
-				//Cadastra no Banco
+
+				// VERIFICA SE O USUARIO TEM ACESSO NESTE HORARIO
+				SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+				LocalTime timeAtual = LocalTime.parse(dateFormat.format(new Date()));
+
+				// Cria o acesso
+				Acesso acesso;
 				AcessoCtrl acessoCtrl = new AcessoCtrl();
-				acessoCtrl.incluirAcesso(acesso);				
-				
-				dispose();
+
+				// busca no banco se o usuario entrou e ainda nao saiu
+				acesso = acessoCtrl.consultarAcesso(usuario);
+				try
+				{
+					// usuario entrou e nao saiu
+					String cpf = acesso.getUsuario().getCpf();
+				}
+				catch (Exception e2)
+				{
+					// usuario nao entrou
+					acesso = null;
+				}
+
+				// Verifica se esta entrando ou saindo da catraca
+				if (modo == 1) // Entrando catraca
+				{
+					// Verifica se o usuario ainda nao saiu pela catraca
+					if (acesso == null)
+					{
+						LocalTime horaEntrada = LocalTime.parse(usuario.getHorarioDeAcesso().substring(0, 5));
+						LocalTime horaSaida = LocalTime.parse(usuario.getHorarioDeAcesso().substring(8, 13));
+
+						// Compara o horario de acesso, com o horario atual
+						if (timeAtual.isAfter(horaEntrada) && timeAtual.isBefore(horaSaida))
+						{
+							// adiciona o usuario ao acesso
+							acesso = new Acesso();
+							acesso.setUsuario(usuario);
+							acesso.setEntrada(new Date());
+
+							// Cadastra no Banco
+							acessoCtrl.incluirAcesso(acesso);
+
+							JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginRealizado"));
+							dispose();
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Horario de acesso não permitido!");
+							// Limpa
+							loginJText.setText("");
+							senhaJText.setText("");
+						}
+					}
+					else // Usuario ja entrou e ainda nao saiu
+					{
+						JOptionPane.showMessageDialog(null, "Usuário já passou pela catraca e ainda não saiu!\nEntrada Bloqueada!");
+						// Limpa
+						loginJText.setText("");
+						senhaJText.setText("");
+					}
+				}
+				else // saindo catraca
+				{
+					//Usuario entrou e nao saiu
+					if (acesso != null)
+					{
+						acesso.setSaida(new Date());
+						acessoCtrl.alterarAcesso(acesso.getId(), acesso);
+						JOptionPane.showMessageDialog(null, "Saída liberada!");
+						
+						dispose();
+					}
+					else //usuario nao entrou, portanto nao pode sair
+					{
+						JOptionPane.showMessageDialog(null, "Usuario não entrou! Saída bloqueada!");
+						// Limpa
+						loginJText.setText("");
+						senhaJText.setText("");
+					}
+				}
 			}
 			else
 			{
 				loginJText.setText("");
-				senhaJText.setText("");				
+				senhaJText.setText("");
+
+				application.closeFile();
+
+				JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginNaoRealizado"));
 			}
 
 		}
@@ -212,7 +291,15 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 
 	public void setComponentText()
 	{
-		bEntrar.setText(bn.getString("telaAcessarCatraca.botao.entrar"));
+		if (modo == 1)
+		{
+			bEntrar.setText(bn.getString("telaAcessarCatraca.botao.entrar"));
+		}
+		else
+		{
+			bEntrar.setText("Saída");
+		}
+
 		apresentacaoJLabel.setText(bn.getString("telaAcessarCatraca.label.apresentacao"));
 		loginJLabel.setText(bn.getString("telaAcessarCatraca.label.login"));
 		senhaJLabel.setText(bn.getString("telaAcessarCatraca.label.senha"));

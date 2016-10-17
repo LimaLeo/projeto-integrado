@@ -18,6 +18,18 @@ public class AcessoCtrl {
 		return acessos;
 	}
 	
+	public Acesso consultarAcesso(Usuario usuario)
+	{
+		Acesso acesso = dao.consultaAcessoUsuario(usuario);
+		return acesso;
+	}
+	
+	public Acesso alterarAcesso(int id, Acesso acessoAlterar)
+	{
+		Acesso acesso = dao.alteraAcessoUsuario(id, acessoAlterar);
+		return acesso;
+	}
+	
 	
 	
 	

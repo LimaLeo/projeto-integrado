@@ -23,10 +23,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-public class TelaPrincipal extends JFrame implements ActionListener {
+public class TelaPrincipal extends JFrame implements ActionListener
+{
 	// atributos para botoes
 	private JButton bConsultarEmpresa, bManterUsuario, bEnviarArquivoDeAcesso, bEnviarReconfiguracaoDeTemperatura,
-			bAcessarCatraca, bConsultarAcesso;
+			bAcessarCatraca, bSairCatraca, bConsultarAcesso;
 	private JLabel lBoasVidas, lAdministracao, lEnviarArquivoDeAcesso, lEnviarReconfiguracaoDeTemperatura;
 
 	// atributos para o menu
@@ -46,7 +47,8 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 	// tela de login
 	private TelaLogin telaLogin;
 
-	public TelaPrincipal() {
+	public TelaPrincipal()
+	{
 		// determina o idioma padrao para portugues
 		bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
@@ -54,7 +56,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
-		
+
 		AplicaLookAndFeel.lookAndFeel();
 
 		// instancia abas
@@ -66,6 +68,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		bEnviarArquivoDeAcesso = new JButton();
 		bEnviarReconfiguracaoDeTemperatura = new JButton();
 		bAcessarCatraca = new JButton();
+		bSairCatraca = new JButton();
 		bConsultarAcesso = new JButton();
 
 		// determina o tamanho dos botoes
@@ -82,6 +85,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		bEnviarArquivoDeAcesso.addActionListener(this);
 		bEnviarReconfiguracaoDeTemperatura.addActionListener(this);
 		bAcessarCatraca.addActionListener(this);
+		bSairCatraca.addActionListener(this);
 		bConsultarAcesso.addActionListener(this);
 
 		// instancia label
@@ -128,9 +132,12 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		mIdioma.add(miEspanhol);
 
 		// Adicionar os metodos dos MenuItens
-		miPortugues.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == miPortugues) {
+		miPortugues.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (e.getSource() == miPortugues)
+				{
 					// determina o idioma para portugues
 					bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 					setComponentText();
@@ -139,10 +146,13 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 			}
 		});
 
-		miIngles.addActionListener(new ActionListener() {
+		miIngles.addActionListener(new ActionListener()
+		{
 
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == miIngles) {
+			public void actionPerformed(ActionEvent e)
+			{
+				if (e.getSource() == miIngles)
+				{
 					// determina o idioma para ingles
 					bn = ResourceBundle.getBundle("idioma", Locale.US);
 					setComponentText();
@@ -151,10 +161,13 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		});
 
-		miEspanhol.addActionListener(new ActionListener() {
+		miEspanhol.addActionListener(new ActionListener()
+		{
 
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == miEspanhol) {
+			public void actionPerformed(ActionEvent e)
+			{
+				if (e.getSource() == miEspanhol)
+				{
 					// determina o idioma para ingles
 					bn = ResourceBundle.getBundle("idioma", new Locale("es", "ES"));
 					setComponentText();
@@ -186,6 +199,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		pMenusSistemaControlePredial.setBorder(new EmptyBorder(10, 10, 10, 450));
 
 		pMenuSistemaDeCatraca.add(bAcessarCatraca);
+		pMenuSistemaDeCatraca.add(bSairCatraca);
 		pMenuSistemaDeCatraca.add(bConsultarAcesso);
 		pMenuSistemaDeCatraca.setBorder(new EmptyBorder(10, 10, 10, 450));
 
@@ -235,38 +249,52 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		// metodo para realizacao de login
 		boolean statusLogin;
-		do {
+		do
+		{
 			statusLogin = TelaLogin.login(this);
-		} while (!statusLogin);
+		}
+		while (!statusLogin);
 
 		// metodo que atualiza o texto de todos os componentes
 		bn = TelaLogin.bn;
 		setComponentText();
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bConsultarEmpresa) {
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == bConsultarEmpresa)
+		{
 			TelaConsultarEmpresa consultarEmpresa = new TelaConsultarEmpresa();
 		}
 
-		if (e.getSource() == bManterUsuario) {
+		if (e.getSource() == bManterUsuario)
+		{
 			TelaConsultarUsuario consultarUsuario = new TelaConsultarUsuario();
 		}
 
-		if (e.getSource() == bEnviarArquivoDeAcesso) {
+		if (e.getSource() == bEnviarArquivoDeAcesso)
+		{
 
 		}
 
-		if (e.getSource() == bAcessarCatraca) {
-			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this);
-			
+		if (e.getSource() == bAcessarCatraca)
+		{
+			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this,1); // 1 - Entrar Catraca
 		}
-		if (e.getSource() == bConsultarAcesso) {
+
+		if (e.getSource() == bSairCatraca)
+		{
+			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this,2); // 2 - Sair Catraca
+		}
+
+		if (e.getSource() == bConsultarAcesso)
+		{
 			TelaConsultarAcesso telaConsultarAcesso = new TelaConsultarAcesso(this);
 		}
 	}
 
-	public void setComponentText() {
+	public void setComponentText()
+	{
 		abas.setTitleAt(0, bn.getString("telaPrincipal.abas.sistemacontrolepredial"));
 		abas.setTitleAt(1, bn.getString("telaPrincipal.abas.sistemacatraca"));
 		abas.setTitleAt(2, bn.getString("telaPrincipal.abas.configuracao"));
@@ -276,6 +304,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		bEnviarArquivoDeAcesso.setText(bn.getString("telaPrincipal.botao.configuracoes"));
 		bEnviarReconfiguracaoDeTemperatura.setText(bn.getString("telaPrincipal.botao.reconfiguracaodetemperatura"));
 		bAcessarCatraca.setText(bn.getString("telaPrincipal.botao.acessarcatraca"));
+		bSairCatraca.setText("Sair Catraca");
 		bConsultarAcesso.setText(bn.getString("telaPrincipal.botao.consultaracesso"));
 
 		lBoasVidas.setText(bn.getString("telaPrincipal.label.boasvidas"));
