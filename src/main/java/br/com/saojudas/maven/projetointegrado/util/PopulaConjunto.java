@@ -38,6 +38,17 @@ public class PopulaConjunto {
 		Conjunto conjunto9 = new Conjunto("I", 20, Status.ATIVO, empresa9);
 		Conjunto conjunto10 = new Conjunto("J", 20, Status.ATIVO, empresa10);
 		
+		Conjunto conjunto11 = new Conjunto("K", 18, Status.ATIVO);
+		Conjunto conjunto12 = new Conjunto("L", 20, Status.ATIVO);
+		Conjunto conjunto13 = new Conjunto("M", 20, Status.ATIVO);
+		Conjunto conjunto14 = new Conjunto("N", 23, Status.ATIVO);
+		Conjunto conjunto15 = new Conjunto("O", 17, Status.ATIVO);
+		Conjunto conjunto16 = new Conjunto("P", 22, Status.ATIVO);
+		Conjunto conjunto17 = new Conjunto("Q", 20, Status.ATIVO);
+		Conjunto conjunto18 = new Conjunto("R", 20, Status.ATIVO);
+		Conjunto conjunto19 = new Conjunto("S", 20, Status.ATIVO);
+		
+		
 		manager.persist(conjunto1);
 		manager.persist(conjunto2);
 		manager.persist(conjunto3);
@@ -48,6 +59,16 @@ public class PopulaConjunto {
 		manager.persist(conjunto8);
 		manager.persist(conjunto9);
 		manager.persist(conjunto10);
+		
+		manager.persist(conjunto11);
+		manager.persist(conjunto12);
+		manager.persist(conjunto13);
+		manager.persist(conjunto14);
+		manager.persist(conjunto15);
+		manager.persist(conjunto16);
+		manager.persist(conjunto17);
+		manager.persist(conjunto18);
+		manager.persist(conjunto19);
 		
 		manager.getTransaction().commit();
 

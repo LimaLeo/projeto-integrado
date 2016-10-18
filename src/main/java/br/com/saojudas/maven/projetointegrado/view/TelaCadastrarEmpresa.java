@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -28,9 +29,12 @@ import javax.swing.text.MaskFormatter;
 import br.com.saojudas.maven.projetointegrado.control.ConjuntoCtrl;
 import br.com.saojudas.maven.projetointegrado.model.Conjunto;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
+import br.com.saojudas.maven.projetointegrado.model.ItemCadastroEmpresa;
 import br.com.saojudas.maven.projetointegrado.model.Status;
 
 public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
+	private static Object[] object;
+	
 	// componentes formul�rio
 	private JLabel lTitulo, lCnpj, lRazaoSocial, lConjuntos, lHorario, lTemperaturaMax;
 	private JTextField tfRazaoSocial;
@@ -52,6 +56,12 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 	// atributo usuario
 	private static Empresa empresa;
+	
+	// atributo conjunto
+	private static Conjunto conjunto;
+
+	private List<Conjunto> conjuntos;
+	private ConjuntoCtrl conjuntoCtrl;
 
 	// atributo status da tela
 	static EstadoTela estadoTela;
@@ -105,12 +115,13 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 		cbConjuntos = new JComboBox<String>();
 
-		// List<Conjunto> cojuntos = conjuntoCtrl.();
-		// for(Conjunto c: conjuntos)
-		// {
-		// cbConjuntos.addItem(c.getBloco());
-		// }
-		// cbConjuntos.addItem("Conjunto 1");
+		// instacnia os conjuntos
+		conjuntoCtrl = new ConjuntoCtrl();
+		conjuntos = conjuntoCtrl.consultarTodosConjuntos();
+
+		for (Conjunto c : conjuntos) {
+			cbConjuntos.addItem(c.getBloco());
+		}
 
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
@@ -241,6 +252,10 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 							tfRazaoSocial.getText(), ftfHorario.getText().replace("_", ""),
 							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
+
+					conjunto = conjuntoCtrl
+							.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
+
 					dispose();
 				} catch (Exception f) {
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
@@ -253,6 +268,10 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
 
+					conjunto = conjuntoCtrl
+							.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
+
+					
 					dispose();
 				} catch (Exception f) {
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
@@ -280,14 +299,16 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		setTitle(bn.getString("telaCadastrarEmpresa.label.titulo"));
 	}
 
-	static Empresa cadastrarEmpresa(JFrame fr) {
+	static ItemCadastroEmpresa cadastrarEmpresa(JFrame fr) {
 		TelaCadastrarEmpresa cadastrarUsuario = new TelaCadastrarEmpresa(fr, null);
-		return empresa;
+		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto) ;
+		return iCE;
 	}
 
-	static Empresa alteraEmpresa(JFrame fr, Empresa empresaAlterada) {
+	static ItemCadastroEmpresa alteraEmpresa(JFrame fr, Empresa empresaAlterada) {
 		TelaCadastrarEmpresa cadastrarEmpresa = new TelaCadastrarEmpresa(fr, empresaAlterada);
-		return empresa;
+		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto) ;
+		return iCE;
 	}
 
 	public void alteraTipoDeTela(Empresa empresa) {

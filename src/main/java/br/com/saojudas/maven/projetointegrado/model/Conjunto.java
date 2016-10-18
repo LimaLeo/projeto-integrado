@@ -39,6 +39,12 @@ public class Conjunto {
 		setStatus(status);
 		setEmpresa_conjunto(empresa_conjunto);
 	}
+	
+	public Conjunto(String bloco, int temperaturaMedia, Status status) {
+		setBloco(bloco);
+		setTemperaturaMedia(temperaturaMedia);
+		setStatus(status);
+	}
 
 	public Integer getId_conjunto() {
 		return id_conjunto;

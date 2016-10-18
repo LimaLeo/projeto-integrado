@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.com.saojudas.maven.projetointegrado.dao.ConjuntoDao;
 import br.com.saojudas.maven.projetointegrado.model.Conjunto;
-import br.com.saojudas.maven.projetointegrado.model.Usuario;
+import br.com.saojudas.maven.projetointegrado.model.Empresa;
 
 public class ConjuntoCtrl {
 	private ConjuntoDao dao = new ConjuntoDao();
@@ -14,9 +14,12 @@ public class ConjuntoCtrl {
 		return conjuntos;
 	}
 	
-	// public Usuario alteraConjunto(int id, Conjunto cojuntoAlterado)
-	// {
-	// Conjunto conjunto = dao.alteraConjunto(id, cojuntoAlterado);
-	// return conjunto;
-	// }
+	public Conjunto consultaConjunto(String bloco){
+		Conjunto conjunto = dao.consultaConjunto(bloco);
+		return conjunto;
+	}
+	
+	public void alteraConjunto(int id,Empresa empresa) {
+		dao.alteraConjunto(id, empresa);
+	}
 }

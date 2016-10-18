@@ -34,9 +34,11 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.MaskFormatter;
 
 import br.com.saojudas.maven.projetointegrado.components.TableModelEmpresa;
+import br.com.saojudas.maven.projetointegrado.control.ConjuntoCtrl;
 import br.com.saojudas.maven.projetointegrado.control.EmpresaCtrl;
+import br.com.saojudas.maven.projetointegrado.model.Conjunto;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
-import br.com.saojudas.maven.projetointegrado.model.Usuario;
+import br.com.saojudas.maven.projetointegrado.model.ItemCadastroEmpresa;
 
 public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 	// atributos para formulario
@@ -71,8 +73,10 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 	private TableModelEmpresa modelo;
 
 	private ArrayList<Empresa> empresas;
-	
+
 	static EstadoTela alteraEstadoTela;
+
+	private ConjuntoCtrl conjuntoCtrl;
 
 	public TelaConsultarEmpresa() {
 		// determina o idioma padrao para portugues
@@ -171,6 +175,8 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 		// instancia e atribui as empresas cadastradas no banco
 		empresaCtrl = new EmpresaCtrl();
+		conjuntoCtrl = new ConjuntoCtrl();
+
 		empresas = (ArrayList) empresaCtrl.consultarTodasEmpresas();
 
 		// carrega empresas atuais
@@ -289,11 +295,18 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		if (e.getSource() == bCadastrar) {
 			try {
 				alteraEstadoTela = EstadoTela.CADASTRAR;
-				Empresa empresa = TelaCadastrarEmpresa.cadastrarEmpresa(this);
-				empresaCtrl.incluirEmpresa(empresa);
+				ItemCadastroEmpresa iCE = TelaCadastrarEmpresa.cadastrarEmpresa(this);
+
+				// inclui empresa banco
+				empresaCtrl.incluirEmpresa(iCE.getEmpresa());
 
 				// adiciona usuario na lista de usuarios
-				modelo.addEmpresa(empresa);
+				modelo.addEmpresa(iCE.getEmpresa());
+
+				Empresa empresaAlterada = empresaCtrl.consultaEmpresa(iCE.getEmpresa().getCnpj());
+
+				// faz update do conjunto
+				conjuntoCtrl.alteraConjunto(iCE.getConjunto().getId_conjunto(), empresaAlterada);
 
 				// carrega usuarios
 				modelo.setAlEmpresa(empresas);
@@ -311,7 +324,7 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 				empresa = modelo.carregaEmpresa(linhaSelecionada);
 
 				alteraEstadoTela = EstadoTela.CONSULTAR;
-				TelaCadastrarEmpresa cadastrarEmpresa= new TelaCadastrarEmpresa(null, empresa);
+				TelaCadastrarEmpresa cadastrarEmpresa = new TelaCadastrarEmpresa(null, empresa);
 
 				// usuario = usuarioCtrl.consultaUsuario(usuario.getCpf());
 				// System.out.println(usuario.getId());
@@ -330,17 +343,22 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 				alteraEstadoTela = EstadoTela.ALTERAR;
 
 				// carrega usuario do banco
-				empresa = TelaCadastrarEmpresa.alteraEmpresa(null, pegaEmpresa);
+				ItemCadastroEmpresa iCE = TelaCadastrarEmpresa.alteraEmpresa(null, pegaEmpresa);
 
 				// altera conforme campo alterado
-				pegaEmpresa.setCnpj(empresa.getCnpj());
-				pegaEmpresa.setRazaoSocial(empresa.getRazaoSocial());
-				pegaEmpresa.setHorarioDeFuncionamento(empresa.getHorarioDeFuncionamento());
-				pegaEmpresa.setTemperaturaMaximaArCondicionado(empresa.getTemperaturaMaximaArCondicionado());
-				
+				pegaEmpresa.setCnpj(iCE.getEmpresa().getCnpj());
+				pegaEmpresa.setRazaoSocial(iCE.getEmpresa().getRazaoSocial());
+				pegaEmpresa.setHorarioDeFuncionamento(iCE.getEmpresa().getHorarioDeFuncionamento());
+				pegaEmpresa.setTemperaturaMaximaArCondicionado(iCE.getEmpresa().getTemperaturaMaximaArCondicionado());
 
 				// faz o merge dos dados alterados
 				empresaCtrl.alteraEmpresa(pegaEmpresa.getId(), pegaEmpresa);
+				Empresa empresaAlterada = empresaCtrl.consultaEmpresa(iCE.getEmpresa().getCnpj());
+				System.out.println(empresaAlterada.getId());
+				System.out.println(iCE.getConjunto().getId_conjunto());
+
+				// faz update do conjunto
+				conjuntoCtrl.alteraConjunto(iCE.getConjunto().getId_conjunto(), empresaAlterada);
 
 				// atualiza lista
 				modelo.setAlEmpresa(empresas);
