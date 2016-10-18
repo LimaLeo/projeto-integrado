@@ -24,7 +24,8 @@ import javax.swing.SwingConstants;
 
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
 import br.com.saojudas.maven.projetointegrado.components.ReadLoginFile;
-import br.com.saojudas.maven.projetointegrado.view.AplicaLookAndFeel;
+import br.com.saojudas.maven.projetointegrado.dao.UsuarioDao;
+import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class TelaLogin extends JDialog implements ActionListener {
 
@@ -184,7 +185,19 @@ public class TelaLogin extends JDialog implements ActionListener {
 			}
 			
 			// verifica se o login e a senha est�o corretos						
-			statusLogin = application.validaDadosLogin(login, sSenhaCifrada);
+			// Busca o usuario no Banco de Dados
+			UsuarioDao usuarioDao = new UsuarioDao();
+			Usuario usuario = usuarioDao.consultaUsuarioLogin(login);
+			
+			if(usuario.getLogin().equals(login) && usuario.getSenha().equals(sSenhaCifrada))
+			{
+				statusLogin = true;
+			}
+			else
+			{
+				statusLogin = false;
+			}
+			
 			application.closeFile();
 			dispose();
 		}

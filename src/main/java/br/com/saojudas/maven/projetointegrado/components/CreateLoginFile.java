@@ -1,24 +1,18 @@
 package br.com.saojudas.maven.projetointegrado.components;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.FormatterClosedException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 //import java.util.Scanner;
+import javax.swing.event.ListSelectionEvent;
 
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 import br.com.saojudas.maven.projetointegrado.view.TelaPrincipal;
@@ -39,7 +33,7 @@ public class CreateLoginFile
 		} // end try
 		catch (SecurityException securityException)
 		{
-			System.err.println("Voc� tem acesso para criar esse arquivo.");
+			System.err.println("Você tem acesso para criar esse arquivo.");
 			System.exit(1);
 		} // end catch
 		catch (FileNotFoundException filesNotFoundException)
@@ -50,39 +44,37 @@ public class CreateLoginFile
 	}
 
 	// cria login
-	public void createLogin(String nome, String senha) throws IOException
-	{
-		Usuario usuario = new Usuario();
-		usuario.setLogin(nome);
-		usuario.setSenha(senha);
-
-		InputStream inputStream = new FileInputStream("login.txt");
-		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-		OutputStream outputStream = new FileOutputStream("login-tmp.txt");
-		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-		BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-
-		String dados = String.format("%s %s", usuario.getLogin(), usuario.getSenha());
-
-		String linha = bufferedReader.readLine();
-		bufferedWriter.append(dados);
-
-		while (linha != null)
+	public void criarArquivoAcesso(List<Usuario> listaUsuario)
+	{		
+		try // output values to file
 		{
-			bufferedWriter.newLine();
-			bufferedWriter.append(linha);
-			linha = bufferedReader.readLine();
+			// abre o arquivo de texto
+			writer = new FileWriter("login.txt", false);
+			
+			for (Usuario usuario : listaUsuario)
+			{
+				// escreve no arquivo de texto
+				writer.write(usuario.getLogin() + " " + usuario.getSenha() + "\n");
+			}
+			// fecha o arquivo de texto
+			writer.close();
+
+		} // end try
+		catch (FormatterClosedException formatterClosedException)
+		{
+			System.err.println("Erro ao escrever para o arquivo.");
+			return;
+		} // end catch
+		catch (NoSuchElementException elementException)
+		{
+			System.err.println("Entrada inv�lida. Por favor tente novamente.");
+		} // end catch
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		bufferedReader.close();
-		bufferedWriter.close();
-
-		File login = new File("login.txt");
-		login.delete();
-
-		File loginTmp = new File("login-tmp.txt");
-		loginTmp.renameTo(new File("login.txt"));
+		JOptionPane.showMessageDialog(null, "Arquivo de acessos enviado!");
 	}
 
 	public void addRecords(String usuario, String senha)
@@ -125,35 +117,4 @@ public class CreateLoginFile
 			output.close();
 	} // end method closeFile
 
-	public void ordenar(String[] vetUsuario)
-	{ // object to be written to file
-		try // output values to file
-		{
-			// abre o arquivo de texto
-			writer = new FileWriter("login.txt", false);
-			for (int i = 0; i < vetUsuario.length; i++)
-			{
-				// escreve no arquivo de texto
-				writer.write(vetUsuario[i] + "\n");
-			}
-			// fecha o arquivo de texto
-			writer.close();
-
-		} // end try
-		catch (FormatterClosedException formatterClosedException)
-		{
-			System.err.println("Erro ao escrever para o arquivo.");
-			return;
-		} // end catch
-		catch (NoSuchElementException elementException)
-		{
-			System.err.println("Entrada inv�lida. Por favor tente novamente.");
-		} // end catch
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	} // end method addRecords
-		// close file
 } // end class CreateTextFile

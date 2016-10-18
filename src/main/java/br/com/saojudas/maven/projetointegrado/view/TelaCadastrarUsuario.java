@@ -351,16 +351,8 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					if (rbFuncionario.isSelected()) {
 						tipoUsuario = TipoUsuario.FUNCIONARIO;
 					}
-					empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
-					usuario = new Usuario(tfNome.getText(),
-							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
-							new String(pfSenha.getPassword()).trim(),
-							ftfHorario.getText().replace("_", ""), tipoUsuario,
-							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
-
-					String login = tfLogin.getText().toLowerCase();
+					
 					String senha = new String(pfSenha.getPassword()).trim();
-
 					// criptografa a senha informada
 
 					// Instancia um objeto da classe CryptoAES
@@ -386,8 +378,17 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 						e1.printStackTrace();
 					}
 
-					application.addRecords(login, sSenhaCifrada);
+					//busca a empresa do usuario
+					empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+					//instancia objeto usuario					
+					usuario = new Usuario(tfNome.getText(),
+							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
+							sSenhaCifrada,
+							ftfHorario.getText().replace("_", ""), tipoUsuario,
+							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
+
 					dispose();
+
 				} catch (Exception f) {
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
 				}
@@ -400,10 +401,37 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					if (rbFuncionario.isSelected()) {
 						tipoUsuario = TipoUsuario.FUNCIONARIO;
 					}
+					
+					String senha = new String(pfSenha.getPassword()).trim();
+					// criptografa a senha informada
+
+					// Instancia um objeto da classe CryptoAES
+					CryptoAES caes = new CryptoAES();
+
+					// senha em byte
+					byte[] bSenha = null;
+					// senha criptografada em byte
+					byte[] bSenhaCifrada = null;
+					// senha cifrada Hexadecimal
+					String sSenhaCifrada = "";
+					try {
+						// converte a senha digitada para byte
+						bSenha = senha.getBytes("ISO-8859-1");
+						File chave = new File("chave.simetrica");
+						// gera a cifra da senha digitada
+						caes.geraCifra(bSenha, chave);
+						// Recebe o texto cifrado
+						bSenhaCifrada = caes.getTextoCifrado();
+						// Converter senha cifrada para hexadecimal
+						sSenhaCifrada = caes.fromHex(bSenhaCifrada);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
 					empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
 					usuario = new Usuario(tfNome.getText(),
 							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
-							new String(pfSenha.getPassword()).trim(),
+							sSenhaCifrada,
 							ftfHorario.getText().replace("_", ""), tipoUsuario,
 							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
 					

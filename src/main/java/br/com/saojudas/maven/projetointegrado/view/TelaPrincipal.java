@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -22,6 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
+import br.com.saojudas.maven.projetointegrado.dao.UsuarioDao;
+import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class TelaPrincipal extends JFrame implements ActionListener
 {
@@ -274,7 +279,14 @@ public class TelaPrincipal extends JFrame implements ActionListener
 
 		if (e.getSource() == bEnviarArquivoDeAcesso)
 		{
-
+			//Criar e enviar arquivos de acesso
+			//Buscar Lista com todos Usuario do banco de dados
+			UsuarioDao usuarioDao = new UsuarioDao();
+			List<Usuario> listaUsuario = usuarioDao.consultarTodosUsuario();
+			
+			CreateLoginFile arquivoAcesso = new CreateLoginFile();
+			arquivoAcesso.criarArquivoAcesso(listaUsuario);
+			
 		}
 
 		if (e.getSource() == bAcessarCatraca)

@@ -19,7 +19,7 @@ public class ReadLoginFile
 {
 	private Scanner input;
 	private static boolean gerente;
-	
+
 	// internacionaliza��o
 	static ResourceBundle bn = TelaPrincipal.bn;
 
@@ -71,12 +71,12 @@ public class ReadLoginFile
 	public boolean validaDadosLogin(String login, String senha)
 	{
 		String vet[] = getVetLoginOrdenado();
-		if(buscaBinaria(vet, login + " " + senha) != -1)
+		if (buscaBinaria(vet, login + " " + senha) != -1)
 		{
-			JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginRealizado"));
-			return true;		
+
+			return true;
 		}
-		JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginNaoRealizado"));
+
 		return false;
 	}
 
@@ -119,7 +119,7 @@ public class ReadLoginFile
 		if (input != null)
 			input.close(); // close file
 	} // end method closeFile
-
+	
 	// Ordenar txt
 	public String[] getVetLoginOrdenado()
 	{
