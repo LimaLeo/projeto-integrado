@@ -250,7 +250,7 @@ public class TelaPrincipal extends JFrame implements ActionListener
 		// setExtendedState(MAXIMIZED_BOTH);
 
 		// metodo que atualiza o texto de todos os componentes
-		setComponentText();
+		// setComponentText();
 
 		// metodo para realizacao de login
 		boolean statusLogin;
