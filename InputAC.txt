@@ -1,0 +1,10 @@
+A 1 20 23 false
+B 2 16 24 false
+C 3 29 21 true
+D 4 19 17 true
+E 5 25 18 true
+F 6 25 21 true
+G 7 19 22 false
+H 8 21 24 false
+I 9 26 20 true
+J 10 25 20 true

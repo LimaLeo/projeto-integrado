@@ -31,8 +31,7 @@ import br.com.saojudas.maven.projetointegrado.control.UsuarioCtrl;
 import br.com.saojudas.maven.projetointegrado.model.Acesso;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
-public class TelaAcessarCatraca extends JDialog implements ActionListener
-{
+public class TelaAcessarCatraca extends JDialog implements ActionListener {
 
 	private ResourceBundle bn = TelaPrincipal.bn;
 
@@ -51,8 +50,7 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 	// modo da tela, 1 - Entrar, 2 - Sair
 	private int modo;
 
-	public TelaAcessarCatraca(JFrame fr, int modo)
-	{
+	public TelaAcessarCatraca(JFrame fr, int modo) {
 		// invoca o m�todo construtor da superclasse
 		super(fr, true);
 		this.modo = modo;
@@ -60,7 +58,7 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// instancia itens de formulario
 		bEntrar = new JButton();
@@ -144,10 +142,8 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 	}
 
 	// Implementacao do metodo da interface ActionListener
-	public void actionPerformed(ActionEvent e)
-	{
-		if (e.getSource() == bEntrar)
-		{
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == bEntrar) {
 			application = new ReadLoginFile();
 			application.openFile();
 
@@ -165,8 +161,7 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 			byte[] bSenhaCifrada = null;
 			// senha cifrada Hexadecimal
 			String sSenhaCifrada = "";
-			try
-			{
+			try {
 				// converte a senha digitada para byte
 				bSenha = senha.getBytes("ISO-8859-1");
 				File chave = new File("chave.simetrica");
@@ -176,15 +171,12 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 				bSenhaCifrada = caes.getTextoCifrado();
 				// Converter senha cifrada para hexadecimal
 				sSenhaCifrada = caes.fromHex(bSenhaCifrada);
-			}
-			catch (Exception e1)
-			{
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 
 			// verifica se o login e a senha est�o corretos
-			if (application.validaDadosLogin(login, sSenhaCifrada))
-			{
+			if (application.validaDadosLogin(login, sSenhaCifrada)) {
 				application.closeFile();
 
 				// Inserir dados de acesso no Banco
@@ -202,13 +194,10 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 
 				// busca no banco se o usuario entrou e ainda nao saiu
 				acesso = acessoCtrl.consultarAcesso(usuario);
-				try
-				{
+				try {
 					// usuario entrou e nao saiu
 					String cpf = acesso.getUsuario().getCpf();
-				}
-				catch (Exception e2)
-				{
+				} catch (Exception e2) {
 					// usuario nao entrou
 					acesso = null;
 				}
@@ -217,14 +206,12 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 				if (modo == 1) // Entrando catraca
 				{
 					// Verifica se o usuario ainda nao saiu pela catraca
-					if (acesso == null)
-					{
+					if (acesso == null) {
 						LocalTime horaEntrada = LocalTime.parse(usuario.getHorarioDeAcesso().substring(0, 5));
 						LocalTime horaSaida = LocalTime.parse(usuario.getHorarioDeAcesso().substring(8, 13));
 
 						// Compara o horario de acesso, com o horario atual
-						if (timeAtual.isAfter(horaEntrada) && timeAtual.isBefore(horaSaida))
-						{
+						if (timeAtual.isAfter(horaEntrada) && timeAtual.isBefore(horaSaida)) {
 							// adiciona o usuario ao acesso
 							acesso = new Acesso();
 							acesso.setUsuario(usuario);
@@ -235,35 +222,30 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 
 							JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginRealizado"));
 							dispose();
-						}
-						else
-						{
+						} else {
 							JOptionPane.showMessageDialog(null, "Horario de acesso não permitido!");
 							// Limpa
 							loginJText.setText("");
 							senhaJText.setText("");
 						}
-					}
-					else // Usuario ja entrou e ainda nao saiu
+					} else // Usuario ja entrou e ainda nao saiu
 					{
-						JOptionPane.showMessageDialog(null, "Usuário já passou pela catraca e ainda não saiu!\nEntrada Bloqueada!");
+						JOptionPane.showMessageDialog(null,
+								"Usuário já passou pela catraca e ainda não saiu!\nEntrada Bloqueada!");
 						// Limpa
 						loginJText.setText("");
 						senhaJText.setText("");
 					}
-				}
-				else // saindo catraca
+				} else // saindo catraca
 				{
-					//Usuario entrou e nao saiu
-					if (acesso != null)
-					{
+					// Usuario entrou e nao saiu
+					if (acesso != null) {
 						acesso.setSaida(new Date());
 						acessoCtrl.alterarAcesso(acesso.getId(), acesso);
 						JOptionPane.showMessageDialog(null, "Saída liberada!");
-						
+
 						dispose();
-					}
-					else //usuario nao entrou, portanto nao pode sair
+					} else // usuario nao entrou, portanto nao pode sair
 					{
 						JOptionPane.showMessageDialog(null, "Usuario não entrou! Saída bloqueada!");
 						// Limpa
@@ -271,9 +253,7 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 						senhaJText.setText("");
 					}
 				}
-			}
-			else
-			{
+			} else {
 				loginJText.setText("");
 				senhaJText.setText("");
 
@@ -282,21 +262,15 @@ public class TelaAcessarCatraca extends JDialog implements ActionListener
 				JOptionPane.showMessageDialog(null, bn.getString("readLoginFile.message.loginNaoRealizado"));
 			}
 
-		}
-		else if (e.getSource() == bCancelar)
-		{
+		} else if (e.getSource() == bCancelar) {
 			dispose();
 		}
 	}
 
-	public void setComponentText()
-	{
-		if (modo == 1)
-		{
+	public void setComponentText() {
+		if (modo == 1) {
 			bEntrar.setText(bn.getString("telaAcessarCatraca.botao.entrar"));
-		}
-		else
-		{
+		} else {
 			bEntrar.setText("Saída");
 		}
 

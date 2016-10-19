@@ -43,7 +43,7 @@ public class TelaLogin extends JDialog implements ActionListener {
 
 	// atributo de login
 	private ReadLoginFile application;
-	
+
 	// atributo para realizar login
 	private static boolean statusLogin;
 
@@ -53,9 +53,9 @@ public class TelaLogin extends JDialog implements ActionListener {
 
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-		
-		AplicaLookAndFeel.lookAndFeel();
-		
+
+		// AplicaLookAndFeel.lookAndFeel();
+
 		// vetor strings de idimas
 		String[] idiomas = { bn.getString("telaPrincipal.menuitem.portugues"),
 				bn.getString("telaPrincipal.menuitem.ingles"), bn.getString("telaPrincipal.menuitem.espanhol") };
@@ -119,7 +119,7 @@ public class TelaLogin extends JDialog implements ActionListener {
 		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		content.add(senhaJText, gBC);
-		
+
 		gBC.gridx = 0;
 		gBC.gridy = 2;
 		gBC.insets = new Insets(5, 5, 5, 5);
@@ -151,53 +151,47 @@ public class TelaLogin extends JDialog implements ActionListener {
 	}
 
 	// Implementacao do metodo da interface ActionListener
-	public void actionPerformed(ActionEvent e)  {
-		if (e.getSource() == bt)  {
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == bt) {
 			String login = loginJText.getText();
 			String senha = new String(senhaJText.getPassword()).trim();
-			
+
 			// criptografa a senha informada
-			
+
 			// Instancia um objeto da classe CryptoAES
 			CryptoAES caes = new CryptoAES();
-			
-			// senha em byte			
+
+			// senha em byte
 			byte[] bSenha = null;
 			// senha criptografada em byte
 			byte[] bSenhaCifrada = null;
 			// senha cifrada Hexadecimal
 			String sSenhaCifrada = "";
-			try
-			{
+			try {
 				// converte a senha digitada para byte
 				bSenha = senha.getBytes("ISO-8859-1");
 				File chave = new File("chave.simetrica");
 				// gera a cifra da senha digitada
-				caes.geraCifra(bSenha, chave);			
+				caes.geraCifra(bSenha, chave);
 				// Recebe o texto cifrado
 				bSenhaCifrada = caes.getTextoCifrado();
-				//Converter senha cifrada para hexadecimal
+				// Converter senha cifrada para hexadecimal
 				sSenhaCifrada = caes.fromHex(bSenhaCifrada);
-			}
-			catch (Exception e1)
-			{
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-			
-			// verifica se o login e a senha est�o corretos						
+
+			// verifica se o login e a senha est�o corretos
 			// Busca o usuario no Banco de Dados
 			UsuarioDao usuarioDao = new UsuarioDao();
 			Usuario usuario = usuarioDao.consultaUsuarioLogin(login);
-			
-			if(usuario.getLogin().equals(login) && usuario.getSenha().equals(sSenhaCifrada))
-			{
+
+			if (usuario.getLogin().equals(login) && usuario.getSenha().equals(sSenhaCifrada)) {
 				statusLogin = true;
-			}
-			else
-			{
+			} else {
 				statusLogin = false;
 			}
-			
+
 			application.closeFile();
 			dispose();
 		}

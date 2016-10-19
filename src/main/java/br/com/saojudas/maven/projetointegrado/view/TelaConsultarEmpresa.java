@@ -86,7 +86,7 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// instancia icones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");

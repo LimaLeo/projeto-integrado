@@ -13,7 +13,30 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<fork>true</fork>
+					<executable>C:\Program Files\Java\jdk1.8.0_45\bin\javac.exe</executable>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>br.com.saojudas.maven.projetointegrado.init.App</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -34,10 +57,10 @@
 			<version>5.1.6</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.jtattoo</groupId>
 			<artifactId>JTattoo</artifactId>
 			<version>1.6.11</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 </project>

@@ -76,8 +76,8 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		Container container = getContentPane();// container
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
-		
-		AplicaLookAndFeel.lookAndFeel();
+
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// instancia botoes
 		bPesquisar = new JButton();
@@ -283,7 +283,7 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 			try {
 				alteraEstadoTela = EstadoTela.CADASTRAR;
 				Usuario usuario = TelaCadastrarUsuario.cadastrarUsuario(this);
-				
+
 				usuarioCtrl.incluirUsuario(usuario);
 
 				// adiciona usuario na lista de usuarios
@@ -339,7 +339,7 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 				// faz o merge dos dados alterados
 				usuarioCtrl.alteraUsuario(pegaUsuario.getId(), pegaUsuario);
-				
+
 				// atualiza lista
 				modelo.setAlUsuario(usuarios);
 

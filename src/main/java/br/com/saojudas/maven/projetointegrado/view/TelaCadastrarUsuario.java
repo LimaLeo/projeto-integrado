@@ -10,12 +10,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -31,7 +29,6 @@ import javax.swing.text.MaskFormatter;
 
 import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
-import br.com.saojudas.maven.projetointegrado.control.EmpresaCtrl;
 import br.com.saojudas.maven.projetointegrado.dao.EmpresaDao;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.TipoUsuario;
@@ -57,8 +54,6 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 	// atributos paineis
 	private JPanel pNorte, pCentro, pSul, pDadosUsuario, pDadosLogin;
 
-	// atributo JComboBox
-	private JComboBox<String> cbEmpresas;
 	// Container
 	Container container;
 
@@ -70,9 +65,6 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 
 	// atributo usuario
 	private static Usuario usuario;
-
-	private List<Empresa> empresas;
-	private EmpresaCtrl empresaCtrl;
 
 	// atributo status da tela
 	static EstadoTela estadoTela;
@@ -88,7 +80,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		container = getContentPane();
 		container.setLayout(new BorderLayout(20, 20));
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
@@ -115,16 +107,6 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		lCnpj = new JLabel();
 		lPermissao = new JLabel();
 		lLivreAcesso = new JLabel();
-
-		cbEmpresas = new JComboBox<String>();
-
-		// instancia empresas
-		empresaCtrl = new EmpresaCtrl();
-		empresas = empresaCtrl.consultarTodasEmpresas();
-
-		for (Empresa e : empresas) {
-			cbEmpresas.addItem(e.getRazaoSocial());
-		}
 
 		bgTipoUsuario = new ButtonGroup();
 		rbSindico = new JRadioButton();
@@ -272,7 +254,6 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		gBC.gridx = 1;
 		gBC.gridy = 7;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		// pDadosUsuario.add(cbEmpresas, gBC);
 		pDadosUsuario.add(ftfCnpj, gBC);
 
 		gBC.gridx = 0;
@@ -398,10 +379,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					}
 
 					// busca a empresa do usuario
-					// empresa =
-					// empresaCtrl.consultaEmpresa(empresas.get(cbEmpresas.getSelectedIndex()).getCnpj());
-
-					empresa = empresaCtrl.consultaEmpresa(
+					empresa = empresaDao.consultaEmpresa(
 							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
 					// instancia objeto usuario
 					usuario = new Usuario(tfNome.getText(),
@@ -450,12 +428,8 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 						e1.printStackTrace();
 					}
 
-					empresa = empresaCtrl.consultaEmpresa(empresas.get(cbEmpresas.getSelectedIndex()).getCnpj());
-
-					// empresa = empresaDao.consultaEmpresa(
-					// ftfCnpj.getText().replace("_", "").replace(".",
-					// "").replace("-", "").replace("/", ""));
-
+					empresa = empresaDao.consultaEmpresa(
+							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
 					usuario = new Usuario(tfNome.getText(),
 							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
 							sSenhaCifrada, ftfHorario.getText().replace("_", ""), tipoUsuario,

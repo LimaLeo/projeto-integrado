@@ -85,7 +85,7 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// instancia �cones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");

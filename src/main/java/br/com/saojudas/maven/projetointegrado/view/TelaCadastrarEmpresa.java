@@ -34,7 +34,7 @@ import br.com.saojudas.maven.projetointegrado.model.Status;
 
 public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 	private static Object[] object;
-	
+
 	// componentes formul�rio
 	private JLabel lTitulo, lCnpj, lRazaoSocial, lConjuntos, lHorario, lTemperaturaMax;
 	private JTextField tfRazaoSocial;
@@ -56,7 +56,7 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 	// atributo usuario
 	private static Empresa empresa;
-	
+
 	// atributo conjunto
 	private static Conjunto conjunto;
 
@@ -73,7 +73,7 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// Configura o Container
 		container = getContentPane();
@@ -253,8 +253,7 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
 
-					conjunto = conjuntoCtrl
-							.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
+					conjunto = conjuntoCtrl.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
 
 					dispose();
 				} catch (Exception f) {
@@ -268,10 +267,8 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 							Integer.parseInt(ftfTemperaturaMaxima.getText().replaceAll("[^0123456789]", "")),
 							Status.ATIVO);
 
-					conjunto = conjuntoCtrl
-							.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
+					conjunto = conjuntoCtrl.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
 
-					
 					dispose();
 				} catch (Exception f) {
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
@@ -301,13 +298,13 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 	static ItemCadastroEmpresa cadastrarEmpresa(JFrame fr) {
 		TelaCadastrarEmpresa cadastrarUsuario = new TelaCadastrarEmpresa(fr, null);
-		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto) ;
+		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto);
 		return iCE;
 	}
 
 	static ItemCadastroEmpresa alteraEmpresa(JFrame fr, Empresa empresaAlterada) {
 		TelaCadastrarEmpresa cadastrarEmpresa = new TelaCadastrarEmpresa(fr, empresaAlterada);
-		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto) ;
+		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto);
 		return iCE;
 	}
 

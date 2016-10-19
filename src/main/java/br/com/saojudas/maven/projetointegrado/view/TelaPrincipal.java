@@ -2,6 +2,7 @@ package br.com.saojudas.maven.projetointegrado.view;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,8 +10,12 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.FormatterClosedException;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -19,17 +24,23 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import br.com.saojudas.maven.projetointegrado.ac.CreateACFile;
+import br.com.saojudas.maven.projetointegrado.ac.CreateACFilePredial;
+import br.com.saojudas.maven.projetointegrado.ac.ReadACFile;
+import br.com.saojudas.maven.projetointegrado.ac.ReadACFilePredial;
 import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
 import br.com.saojudas.maven.projetointegrado.dao.UsuarioDao;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
-public class TelaPrincipal extends JFrame implements ActionListener
-{
+public class TelaPrincipal extends JFrame implements ActionListener {
 	// atributos para botoes
 	private JButton bConsultarEmpresa, bManterUsuario, bEnviarArquivoDeAcesso, bEnviarReconfiguracaoDeTemperatura,
 			bAcessarCatraca, bSairCatraca, bConsultarAcesso;
@@ -52,8 +63,13 @@ public class TelaPrincipal extends JFrame implements ActionListener
 	// tela de login
 	private TelaLogin telaLogin;
 
-	public TelaPrincipal()
-	{
+	// componentes para o Ar Condicionado
+	private CreateACFile cacf;
+	private ReadACFile racf;
+	private CreateACFilePredial cacfp;
+	private ReadACFilePredial racfp;
+
+	public TelaPrincipal() {
 		// determina o idioma padrao para portugues
 		bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
@@ -62,7 +78,7 @@ public class TelaPrincipal extends JFrame implements ActionListener
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		AplicaLookAndFeel.lookAndFeel();
+		// AplicaLookAndFeel.lookAndFeel();
 
 		// instancia abas
 		abas = new JTabbedPane();
@@ -137,12 +153,9 @@ public class TelaPrincipal extends JFrame implements ActionListener
 		mIdioma.add(miEspanhol);
 
 		// Adicionar os metodos dos MenuItens
-		miPortugues.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if (e.getSource() == miPortugues)
-				{
+		miPortugues.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == miPortugues) {
 					// determina o idioma para portugues
 					bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 					setComponentText();
@@ -151,13 +164,10 @@ public class TelaPrincipal extends JFrame implements ActionListener
 			}
 		});
 
-		miIngles.addActionListener(new ActionListener()
-		{
+		miIngles.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e)
-			{
-				if (e.getSource() == miIngles)
-				{
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == miIngles) {
 					// determina o idioma para ingles
 					bn = ResourceBundle.getBundle("idioma", Locale.US);
 					setComponentText();
@@ -166,13 +176,10 @@ public class TelaPrincipal extends JFrame implements ActionListener
 
 		});
 
-		miEspanhol.addActionListener(new ActionListener()
-		{
+		miEspanhol.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e)
-			{
-				if (e.getSource() == miEspanhol)
-				{
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource() == miEspanhol) {
 					// determina o idioma para ingles
 					bn = ResourceBundle.getBundle("idioma", new Locale("es", "ES"));
 					setComponentText();
@@ -254,59 +261,108 @@ public class TelaPrincipal extends JFrame implements ActionListener
 
 		// metodo para realizacao de login
 		boolean statusLogin;
-		do
-		{
+		do {
 			statusLogin = TelaLogin.login(this);
-		}
-		while (!statusLogin);
+		} while (!statusLogin);
 
 		// metodo que atualiza o texto de todos os componentes
 		bn = TelaLogin.bn;
 		setComponentText();
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
-		if (e.getSource() == bConsultarEmpresa)
-		{
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == bConsultarEmpresa) {
 			TelaConsultarEmpresa consultarEmpresa = new TelaConsultarEmpresa();
 		}
 
-		if (e.getSource() == bManterUsuario)
-		{
+		if (e.getSource() == bManterUsuario) {
 			TelaConsultarUsuario consultarUsuario = new TelaConsultarUsuario();
 		}
 
-		if (e.getSource() == bEnviarArquivoDeAcesso)
-		{
-			//Criar e enviar arquivos de acesso
-			//Buscar Lista com todos Usuario do banco de dados
+		if (e.getSource() == bEnviarArquivoDeAcesso) {
+			// Criar e enviar arquivos de acesso
+			// Buscar Lista com todos Usuario do banco de dados
 			UsuarioDao usuarioDao = new UsuarioDao();
 			List<Usuario> listaUsuario = usuarioDao.consultarTodosUsuario();
-			
+
 			CreateLoginFile arquivoAcesso = new CreateLoginFile();
 			arquivoAcesso.criarArquivoAcesso(listaUsuario);
-			
+
 		}
 
-		if (e.getSource() == bAcessarCatraca)
-		{
-			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this,1); // 1 - Entrar Catraca
+		if (e.getSource() == bAcessarCatraca) {
+			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this, 1); // 1
+																					// -
+																					// Entrar
+																					// Catraca
 		}
 
-		if (e.getSource() == bSairCatraca)
-		{
-			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this,2); // 2 - Sair Catraca
+		if (e.getSource() == bSairCatraca) {
+			TelaAcessarCatraca acessarCatraca = new TelaAcessarCatraca(this, 2); // 2
+																					// -
+																					// Sair
+																					// Catraca
 		}
 
-		if (e.getSource() == bConsultarAcesso)
-		{
+		if (e.getSource() == bConsultarAcesso) {
 			TelaConsultarAcesso telaConsultarAcesso = new TelaConsultarAcesso(this);
 		}
+
+		if (e.getSource() == bEnviarReconfiguracaoDeTemperatura) {
+			cacf = new CreateACFile();
+			racf = new ReadACFile();
+			cacfp = new CreateACFilePredial();
+			racfp = new ReadACFilePredial();
+
+			try {
+				// cria o arquivo do Sistema de AC para o Sistema Predial
+				cacf.openFile();
+				cacf.createFile();
+				cacf.closeFile();
+
+				// le o arquivo recebido pelo Sistema de AC e compara os dados
+				racfp.openFile();
+				racfp.readFile();
+				racfp.closeFile();
+
+				// cria o arquivo do Sistema Predial para o Sistema de AC
+				cacfp.openFile();
+				cacfp.createFile();
+				cacfp.closeFile();
+
+				// le o arquivo recebido pelo Sistema Predial e atualiza os ACs
+				racf.openFile();
+				racf.readFile();
+				racf.closeFile();
+
+				JTextArea textArea = new JTextArea(racf.getStr());
+				JScrollPane scrollPane = new JScrollPane(textArea);
+				textArea.setLineWrap(true);
+				textArea.setWrapStyleWord(true);
+				scrollPane.setPreferredSize(new Dimension(500, 500));
+				JOptionPane.showMessageDialog(null, scrollPane, "dialog test with textarea", JOptionPane.OK_OPTION);
+			} catch (SecurityException securityException) {
+				System.err.println("Voc� tem acesso para criar esse arquivo.");
+				System.exit(1);
+			} catch (FileNotFoundException filesNotFoundException) {
+				System.err.println("Erro ao criar/abir o arquivo.");
+				System.exit(1);
+			} catch (FormatterClosedException formatterClosedException) {
+				System.err.println("Erro ao escrever para o arquivo.");
+				return;
+			} catch (NoSuchElementException elementException) {
+				System.err.println("Entrada inv�lida.");
+			} catch (IllegalStateException stateException) {
+				System.err.println("Error reading from file.");
+				System.exit(1);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
 	}
 
-	public void setComponentText()
-	{
+	public void setComponentText() {
 		abas.setTitleAt(0, bn.getString("telaPrincipal.abas.sistemacontrolepredial"));
 		abas.setTitleAt(1, bn.getString("telaPrincipal.abas.sistemacatraca"));
 		abas.setTitleAt(2, bn.getString("telaPrincipal.abas.configuracao"));
