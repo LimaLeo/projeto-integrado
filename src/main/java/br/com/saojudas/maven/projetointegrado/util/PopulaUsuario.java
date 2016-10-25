@@ -12,7 +12,7 @@ import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class PopulaUsuario {
 
-	public static void main(String[] args) {
+	public static void polula() {
 
 		EntityManager manager = new JPAUtil().getEntityManager();
 		
@@ -73,6 +73,9 @@ public class PopulaUsuario {
 		
 		Usuario usuario15 = new Usuario("Giovanni Chiaguetti", "75617169580", "giovanni", "35eb718c9f6fb83e7670f1a7deee1745", "08:00 a 21:00",
 				TipoUsuario.SINDICO, true, true, empresa3);
+		
+		Usuario usuario16 = new Usuario("usuario", "12312312312", "usuario", "35eb718c9f6fb83e7670f1a7deee1745", "08:00 a 21:00",
+				TipoUsuario.SINDICO, true, true, empresa3);
 
 		manager.persist(usuario1);
 		manager.persist(usuario2);
@@ -89,6 +92,8 @@ public class PopulaUsuario {
 		manager.persist(usuario13);
 		manager.persist(usuario14);
 		manager.persist(usuario15);
+		manager.persist(usuario16);
+		
 
 		manager.getTransaction().commit();
 

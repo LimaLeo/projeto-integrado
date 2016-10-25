@@ -12,7 +12,7 @@ import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
 public class PopulaEmpresa {
 
-	public static void main(String[] args) {
+	public static void polula() {
 
 		EntityManager manager = new JPAUtil().getEntityManager();
 		manager.getTransaction().begin();

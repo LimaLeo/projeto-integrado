@@ -39,8 +39,13 @@ import br.com.saojudas.maven.projetointegrado.ac.CreateACFilePredial;
 import br.com.saojudas.maven.projetointegrado.ac.ReadACFile;
 import br.com.saojudas.maven.projetointegrado.ac.ReadACFilePredial;
 import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
+import br.com.saojudas.maven.projetointegrado.control.EmpresaCtrl;
 import br.com.saojudas.maven.projetointegrado.dao.UsuarioDao;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
+import br.com.saojudas.maven.projetointegrado.util.PopulaAcesso;
+import br.com.saojudas.maven.projetointegrado.util.PopulaConjunto;
+import br.com.saojudas.maven.projetointegrado.util.PopulaEmpresa;
+import br.com.saojudas.maven.projetointegrado.util.PopulaUsuario;
 
 public class TelaPrincipal extends JFrame implements ActionListener {
 	// atributos para botoes
@@ -194,6 +199,14 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 			}
 		});
+		EmpresaCtrl ctrl = new EmpresaCtrl();
+		if(ctrl.consultarTodasEmpresas().isEmpty())
+		{
+			PopulaEmpresa.polula();
+			PopulaConjunto.polula();
+			PopulaUsuario.polula();
+			PopulaAcesso.polula();
+		}
 
 		// instancia paineis
 		pMenusSistemaControlePredial = new JPanel();

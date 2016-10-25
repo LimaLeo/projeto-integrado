@@ -12,7 +12,7 @@ public class PopulaAcesso {
 	private static DateFormat dateFormat;
 	private static Date date;
 
-	public static void main(String[] args) {
+	public static void polula() {
 		EntityManager manager = new JPAUtil().getEntityManager();
 		manager.getTransaction().begin();	
 		
