@@ -1,6 +1,7 @@
 # projeto-integrado
 
 Para que a aplicação funcione é preciso segui os passos a seguir:
+
 •	Abrir sua ferramenta de banco de dados e executar a seguinte query:
 
   o	CREATE DATABASE controle_predial;
