@@ -30,7 +30,27 @@ public class EmpresaDao {
 		em.close();
 		return empresas;
 	}
-
+	
+	public List<Empresa> consultarTodasEmpresasRazaoSocial(String razao) {
+		em = new JPAUtil().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Empresa u where u.razaoSocial like '%" + razao + "%'");
+		List<Empresa> empresas = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return empresas;
+	}
+	
+	public List<Empresa> consultarEmpresaCnpj(String cnpj) {
+		em = new JPAUtil().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Empresa u where u.cnpj = '" + cnpj + "'");
+		List<Empresa> empresas = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return empresas;
+	}
+	
 	public Empresa consultaEmpresa(String cnpj) {
 		em = new JPAUtil().getEntityManager();
 		Empresa empresa = new Empresa();

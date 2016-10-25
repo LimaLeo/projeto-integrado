@@ -47,14 +47,16 @@ public class TableModelAcesso extends AbstractTableModel {
 		/* ATEN��O AP�S CRIAR CLASSE DE NEGOCIO, SUBSTITUIR OS M�TODOS */
 		switch (columnIndex) {
 		case 0:
-			return this.alAcesso.get(rowIndex).getUsuario().getNome();
+			return this.alAcesso.get(rowIndex).getUsuario().getTipoUsuario();
 		case 1:
-			return this.alAcesso.get(rowIndex).getUsuario().getCpf();
+			return this.alAcesso.get(rowIndex).getUsuario().getNome();
 		case 2:
-			return this.alAcesso.get(rowIndex).getUsuario().getEmpresa();
+			return this.alAcesso.get(rowIndex).getUsuario().getCpf();
 		case 3:
-			return this.alAcesso.get(rowIndex).getEntrada();
+			return this.alAcesso.get(rowIndex).getUsuario().getEmpresa();
 		case 4:
+			return this.alAcesso.get(rowIndex).getEntrada();
+		case 5:
 			return this.alAcesso.get(rowIndex).getSaida();
 		default:
 			return this.alAcesso.get(rowIndex);
@@ -75,5 +77,70 @@ public class TableModelAcesso extends AbstractTableModel {
 	
 	public void setAlAcesso(ArrayList<Acesso> acessos) {
 		alAcesso = acessos;
+	}
+	
+	public ArrayList<Acesso> getAcessosAtendente(ArrayList<Acesso> acessos)
+	{
+		ArrayList<Acesso> retorno = new ArrayList<Acesso>();
+		
+		for(Acesso acesso : acessos)
+		{
+			String tipo = "" + acesso.getUsuario().getTipoUsuario();
+			if(tipo.equals("ATENDENTE"))
+			{
+				retorno.add(acesso);
+			}
+		}
+		
+		return retorno;
+	}
+	
+	public ArrayList<Acesso> getAcessosSindico(ArrayList<Acesso> acessos)
+	{
+		ArrayList<Acesso> retorno = new ArrayList<Acesso>();
+		
+		for(Acesso acesso : acessos)
+		{
+			String tipo = "" + acesso.getUsuario().getTipoUsuario();
+			if(tipo.equals("SINDICO"))
+			{
+				retorno.add(acesso);
+			}
+		}
+		
+		return retorno;
+	}
+	
+	public ArrayList<Acesso> getAcessosFuncionario(ArrayList<Acesso> acessos)
+	{
+		ArrayList<Acesso> retorno = new ArrayList<Acesso>();
+		
+		for(Acesso acesso : acessos)
+		{
+			String tipo = "" + acesso.getUsuario().getTipoUsuario();
+			if(tipo.equals("FUNCIONARIO"))
+			{
+				retorno.add(acesso);
+			}
+		}
+		
+		return retorno;
+	}
+	
+	public ArrayList<Acesso> getAcessosEmpresa(ArrayList<Acesso> acessos, String empresa)
+	{
+		ArrayList<Acesso> retorno = new ArrayList<Acesso>();
+		
+		for(Acesso acesso : acessos)
+		{
+			String nomeEmpresa = acesso.getUsuario().getEmpresa().getRazaoSocial().toLowerCase().trim();
+			
+			if(nomeEmpresa.contains(empresa))
+			{
+				retorno.add(acesso);
+			}
+		}
+		
+		return retorno;
 	}
 }

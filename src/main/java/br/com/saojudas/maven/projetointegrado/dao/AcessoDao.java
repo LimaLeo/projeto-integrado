@@ -26,12 +26,22 @@ public class AcessoDao {
 	public List<Acesso> consultarTodosAcessos() {
 		em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
-		Query query = em.createQuery("select u from Acesso u");
+		Query query = em.createQuery("select u from Acesso u order by saida desc");
 		List<Acesso> acessos = query.getResultList();
 		em.getTransaction().commit();
 		em.close();
 		return acessos;
 	}
+	
+	public List<Acesso> consultarTodosAcessosData(String dataIni, String dataFim) {
+		em = new JPAUtil().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Acesso u where u.saida between '" + dataIni + "' and '" + dataFim + "' order by saida desc");
+		List<Acesso> acessos = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return acessos;
+	}	
 
 	public Acesso consultaAcesso(int id) {
 		em = new JPAUtil().getEntityManager();

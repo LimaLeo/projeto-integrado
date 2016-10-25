@@ -18,6 +18,16 @@ public class UsuarioCtrl {
 		return usuarios;
 	}
 	
+	public List<Usuario> consultarTodosUsuarioCpf(String cpf) {
+		List<Usuario> usuarios = dao.consultarTodosUsuarioCpf(cpf);
+		return usuarios;
+	}
+	
+	public List<Usuario> consultarTodosUsuarioNome(String nome) {
+		List<Usuario> usuarios = dao.consultarTodosUsuarioNome(nome);
+		return usuarios;
+	}
+	
 	public Usuario consultaUsuario(String cpf)
 	{	
 		Usuario usuario = dao.consultaUsuario(cpf);

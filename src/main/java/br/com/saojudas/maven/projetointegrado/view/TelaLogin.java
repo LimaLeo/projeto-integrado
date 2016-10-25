@@ -23,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
-import br.com.saojudas.maven.projetointegrado.components.ReadLoginFile;
 import br.com.saojudas.maven.projetointegrado.dao.UsuarioDao;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
@@ -41,9 +40,8 @@ public class TelaLogin extends JDialog implements ActionListener {
 	// atributos paineis
 	private JPanel header, content;
 
-	// atributo de login
-	private ReadLoginFile application;
 
+	
 	// atributo para realizar login
 	private static boolean statusLogin;
 
@@ -53,9 +51,9 @@ public class TelaLogin extends JDialog implements ActionListener {
 
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
-
-		// AplicaLookAndFeel.lookAndFeel();
-
+		
+		AplicaLookAndFeel.lookAndFeel();
+		
 		// vetor strings de idimas
 		String[] idiomas = { bn.getString("telaPrincipal.menuitem.portugues"),
 				bn.getString("telaPrincipal.menuitem.ingles"), bn.getString("telaPrincipal.menuitem.espanhol") };
@@ -119,7 +117,7 @@ public class TelaLogin extends JDialog implements ActionListener {
 		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		content.add(senhaJText, gBC);
-
+		
 		gBC.gridx = 0;
 		gBC.gridy = 2;
 		gBC.insets = new Insets(5, 5, 5, 5);
@@ -133,9 +131,6 @@ public class TelaLogin extends JDialog implements ActionListener {
 		// adiciona os paineis ao container
 		container.add(BorderLayout.NORTH, header);
 		container.add(BorderLayout.CENTER, content);
-
-		application = new ReadLoginFile();
-		application.openFile();
 
 		// Registro no listener dos objetos controlados
 		bt.addActionListener(this);
@@ -151,48 +146,71 @@ public class TelaLogin extends JDialog implements ActionListener {
 	}
 
 	// Implementacao do metodo da interface ActionListener
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bt) {
+	public void actionPerformed(ActionEvent e)  {
+		if (e.getSource() == bt)  {
 			String login = loginJText.getText();
 			String senha = new String(senhaJText.getPassword()).trim();
-
+			
 			// criptografa a senha informada
-
+			
 			// Instancia um objeto da classe CryptoAES
 			CryptoAES caes = new CryptoAES();
-
-			// senha em byte
+			
+			// senha em byte			
 			byte[] bSenha = null;
 			// senha criptografada em byte
 			byte[] bSenhaCifrada = null;
 			// senha cifrada Hexadecimal
 			String sSenhaCifrada = "";
-			try {
+			try
+			{
 				// converte a senha digitada para byte
 				bSenha = senha.getBytes("ISO-8859-1");
+				
 				File chave = new File("chave.simetrica");
 				// gera a cifra da senha digitada
-				caes.geraCifra(bSenha, chave);
+				caes.geraCifra(bSenha, chave);			
 				// Recebe o texto cifrado
 				bSenhaCifrada = caes.getTextoCifrado();
-				// Converter senha cifrada para hexadecimal
+				//Converter senha cifrada para hexadecimal
 				sSenhaCifrada = caes.fromHex(bSenhaCifrada);
-			} catch (Exception e1) {
+			}
+			catch (Exception e1)
+			{
 				e1.printStackTrace();
 			}
-
-			// verifica se o login e a senha est�o corretos
+			
+			// verifica se o login e a senha est�o corretos						
 			// Busca o usuario no Banco de Dados
 			UsuarioDao usuarioDao = new UsuarioDao();
 			Usuario usuario = usuarioDao.consultaUsuarioLogin(login);
-
-			if (usuario.getLogin().equals(login) && usuario.getSenha().equals(sSenhaCifrada)) {
+			
+			if(usuario.getLogin().equals(login) && usuario.getSenha().equals(sSenhaCifrada))
+			{
 				statusLogin = true;
-			} else {
+				
+				String tipoUsuario = ""+usuario.getTipoUsuario();
+				if(tipoUsuario.equals("SINDICO"))
+				{
+					TelaPrincipal.nivelAcesso = 1;
+				}
+				else if(tipoUsuario.equals("ATENDENTE"))
+				{
+					TelaPrincipal.nivelAcesso = 2;
+				}
+				else
+				{
+					TelaPrincipal.nivelAcesso = 3;
+				}
+				
+				TelaPrincipal.cpfLogado = usuario.getCpf();
+				TelaPrincipal.nomeLogado = usuario.getNome();
+			}
+			else
+			{
 				statusLogin = false;
 			}
-
-			application.closeFile();
+			
 			dispose();
 		}
 	}

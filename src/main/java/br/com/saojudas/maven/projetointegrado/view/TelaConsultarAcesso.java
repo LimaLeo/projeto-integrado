@@ -3,6 +3,7 @@ package br.com.saojudas.maven.projetointegrado.view;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,12 +11,18 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -23,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -39,14 +47,16 @@ import br.com.saojudas.maven.projetointegrado.components.TableModelAcesso;
 import br.com.saojudas.maven.projetointegrado.control.AcessoCtrl;
 import br.com.saojudas.maven.projetointegrado.model.Acesso;
 
-public class TelaConsultarAcesso extends JDialog implements ActionListener {
+public class TelaConsultarAcesso extends JDialog implements ActionListener
+{
 	// atributos para formulario
-	private JButton bPesquisar, bLimpar, bConsultar;
+	private JButton bPesquisar, bLimpar;
 	private JLabel lConsultarAcesso, lData, lEmpresa, lTipoDeUsuario;
 	private JTextField tfRazaoSocial;
-	private ButtonGroup bgTipoUsuario;
-	private JRadioButton rbSindico, rbAtendente;
-	private JFormattedTextField ftfData;
+	private JCheckBox ckbSindico, ckbAtendente;
+	private JFormattedTextField ftfDataInicio, ftfDataFim;
+	private ButtonGroup bgFiltroBusca;
+	private JRadioButton rbData, rbEmpresa;
 
 	// atributo classe controller
 	private AcessoCtrl acessoCtrl;
@@ -75,7 +85,8 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 
 	private ArrayList<Acesso> acessos;
 
-	public TelaConsultarAcesso(JFrame fr) {
+	public TelaConsultarAcesso(JFrame fr)
+	{
 		// invoca o metodo construtor da superclasse
 		super(fr, true);
 		// determina o idioma selecionado
@@ -85,7 +96,18 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
+
+		// instancia radioButtons
+		rbData = new JRadioButton();
+		rbEmpresa = new JRadioButton();
+		bgFiltroBusca = new ButtonGroup();
+		bgFiltroBusca.add(rbData);
+		bgFiltroBusca.add(rbEmpresa);
+		rbData.setSelected(true);
+
+		rbData.addActionListener(this);
+		rbEmpresa.addActionListener(this);
 
 		// instancia �cones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");
@@ -95,12 +117,10 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		// instancia botoes
 		bPesquisar = new JButton();
 		bLimpar = new JButton();
-		bConsultar = new JButton("", iRead);
 
 		// adiciona acao aos botoes
 		bPesquisar.addActionListener(this);
 		bLimpar.addActionListener(this);
-		bConsultar.addActionListener(this);
 
 		// instancia label
 		lConsultarAcesso = new JLabel();
@@ -109,11 +129,11 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		lTipoDeUsuario = new JLabel();
 
 		// radios buttons para tipos de usuario
-		bgTipoUsuario = new ButtonGroup();
-		rbSindico = new JRadioButton();
-		rbAtendente = new JRadioButton();
-		bgTipoUsuario.add(rbSindico);
-		bgTipoUsuario.add(rbAtendente);
+		ckbAtendente = new JCheckBox();
+		ckbSindico = new JCheckBox();
+		ckbAtendente.setSelected(true);
+		ckbSindico.setSelected(true);
+		
 
 		// edicao de titulo
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
@@ -123,17 +143,22 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 
 		// instancia campo texto
 		tfRazaoSocial = new JTextField(15);
+		tfRazaoSocial.setEnabled(false);
 
 		// instancia mascara
-		try {
+		try
+		{
 			mascaraData = new MaskFormatter("##/##/####");
 			mascaraData.setPlaceholderCharacter('_');
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.err.println("Erro na formata��o: " + e.getMessage());
 			System.exit(-1);
 		}
 
-		ftfData = new JFormattedTextField(mascaraData);
+		ftfDataInicio = new JFormattedTextField(mascaraData);
+		ftfDataFim = new JFormattedTextField(mascaraData);
 
 		// instancia menu
 		mArquivo = new JMenu();
@@ -159,9 +184,10 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 
 		// instancia modelo
 		modelo = new TableModelAcesso();
-		String[] colunas = { bn.getString("telaConsulta.columnname.nome"), bn.getString("telaConsulta.columnname.cpf"),
+		String[] colunas =
+		{ bn.getString("telaConsulta.columnname.tipousuario"), bn.getString("telaConsulta.columnname.nome"), bn.getString("telaConsulta.columnname.cpf"),
 				bn.getString("telaConsulta.columnname.empresa"), bn.getString("telaConsulta.columnname.entrada"),
-				bn.getString("telaConsulta.columnname.saida") };
+				bn.getString("telaConsulta.columnname.saida")};
 		modelo.setColunas(colunas);
 
 		// instancia e atribui os acessos cadastrados no banco
@@ -209,51 +235,53 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		gBC.gridx = 0;
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lData, gBC);
+		pForm.add(rbData, gBC);
+
+		JPanel pData = new JPanel();
+		pData.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+		pData.add(ftfDataInicio);
+		pData.add(new JLabel(" : "));
+		pData.add(ftfDataFim);
 
 		gBC.gridx = 1;
 		gBC.gridy = 0;
 		gBC.weightx = 4;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(ftfData, gBC);
+		pForm.add(pData, gBC);
 
-		gBC.gridx = 2;
-		gBC.gridy = 0;
+		gBC.gridx = 0;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lEmpresa, gBC);
+		pForm.add(rbEmpresa, gBC);
 
-		gBC.gridx = 3;
-		gBC.gridy = 0;
+		gBC.gridx = 1;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		gBC.weightx = 4;
 		pForm.add(tfRazaoSocial, gBC);
 
 		gBC.gridx = 0;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		pForm.add(lTipoDeUsuario, gBC);
 
 		gBC.gridx = 1;
-		gBC.gridy = 1;
-		pForm.add(rbSindico, gBC);
+		gBC.gridy = 2;
+		pForm.add(ckbSindico, gBC);
 
 		gBC.gridx = 1;
-		gBC.gridy = 2;
-		pForm.add(rbAtendente, gBC);
+		gBC.gridy = 3;
+		pForm.add(ckbAtendente, gBC);
 
 		gBC.gridx = 0;
-		gBC.gridy = 3;
+		gBC.gridy = 4;
 		gBC.insets = new Insets(10, 5, 5, 5);
 		pForm.add(bPesquisar, gBC);
 
 		gBC.gridx = 1;
-		gBC.gridy = 3;
+		gBC.gridy = 4;
 		gBC.insets = new Insets(10, 5, 5, 5);
 		pForm.add(bLimpar, gBC);
-
-		gBC.gridx = 3;
-		gBC.gridy = 3;
-		gBC.insets = new Insets(15, 5, 5, 5);
-		pForm.add(bConsultar, gBC);
 
 		// adiciona elementos ao painel
 		pHeader.add(lConsultarAcesso);
@@ -276,26 +304,160 @@ public class TelaConsultarAcesso extends JDialog implements ActionListener {
 		// setExtendedState(MAXIMIZED_BOTH);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bPesquisar) {
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == bPesquisar)
+		{
+			// Verifica qual foi a busca
+			if (rbData.isSelected()) // Busca por datas
+			{
+				String dataIni = ftfDataInicio.getText();
+				String dataFim = ftfDataFim.getText();
 
+				// validar as datas
+				DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				Date dataI = null;
+				Date dataF = null;
+				try
+				{
+					dataI = (Date) dateFormat.parse(dataIni);
+					dataF = (Date) dateFormat.parse(dataFim);
+
+					long dias = dataF.getTime() - dataI.getTime();
+					dias = dias / (24 * 60 * 60 * 1000);
+
+					if (dataI.after(dataF))
+					{
+						JOptionPane.showMessageDialog(null, "Data Inicial não pode ser maior que a final!");
+					}
+					else if (dias > 365)
+					{
+						JOptionPane.showMessageDialog(null, "O Período não pode ser maior que 1 ano");
+					}
+					else if (Integer.parseInt(dataIni.substring(0, 2)) > 32
+							|| Integer.parseInt(dataIni.substring(3, 5)) > 12
+							|| Integer.parseInt(dataFim.substring(0, 2)) > 30
+							|| Integer.parseInt(dataFim.substring(3, 5)) > 12)
+					{
+						JOptionPane.showMessageDialog(null, "Data inválida");
+					}
+					else
+					{
+						dataIni = dataIni.replace("/", "-");
+						dataFim = dataFim.replace("/", "-");
+
+						// Converte o padrao de data br para o en
+						dataIni = dataIni.substring(6, 10) + "-" + dataIni.substring(3, 5) + "-"
+								+ dataIni.substring(0, 2);
+						dataFim = dataFim.substring(6, 10) + "-" + dataFim.substring(3, 5) + "-"
+								+ dataFim.substring(0, 2);
+
+						acessos = (ArrayList) acessoCtrl.consultarTodosAcessosData(dataIni, dataFim);
+
+						// carrega empresas atuais
+
+						// Verifica se quer Atendente, Sinidico, Nenhum ou os
+						// Dois
+						if (ckbAtendente.isSelected() && ckbSindico.isSelected()) // os
+																					// dois
+						{
+							modelo.setAlAcesso(acessos);
+							this.repaint();
+						}
+						else if (ckbAtendente.isSelected() && !ckbSindico.isSelected()) // só
+																						// atendente
+						{
+							modelo.setAlAcesso(modelo.getAcessosAtendente(acessos));
+							this.repaint();
+						}
+						else if (!ckbAtendente.isSelected() && ckbSindico.isSelected()) // só
+																						// sindico
+						{
+							modelo.setAlAcesso(modelo.getAcessosSindico(acessos));
+							this.repaint();
+						}
+						else// nenhum(só funcionario)
+						{
+							modelo.setAlAcesso(modelo.getAcessosFuncionario(acessos));
+							this.repaint();
+						}
+
+					}
+				}
+				catch (ParseException e1)
+				{
+					JOptionPane.showMessageDialog(null, "Data Inválida!");
+				}
+
+			}
+			else //radio button Empresa ta selecionado
+			{
+				acessos = (ArrayList) acessoCtrl.consultarTodosAcessos();				
+				String nomeEmpresa = tfRazaoSocial.getText().toLowerCase().trim();
+				acessos = modelo.getAcessosEmpresa(acessos, nomeEmpresa);
+				
+				// Verifica se quer Atendente, Sinidico, Nenhum ou os
+				// Dois
+				if (ckbAtendente.isSelected() && ckbSindico.isSelected()) // os
+																			// dois
+				{					
+					modelo.setAlAcesso(acessos);
+					this.repaint();
+				}
+				else if (ckbAtendente.isSelected() && !ckbSindico.isSelected()) // só
+																				// atendente
+				{
+					modelo.setAlAcesso(modelo.getAcessosAtendente(acessos));
+					this.repaint();
+				}
+				else if (!ckbAtendente.isSelected() && ckbSindico.isSelected()) // só
+																				// sindico
+				{
+					modelo.setAlAcesso(modelo.getAcessosSindico(acessos));
+					this.repaint();
+				}
+				else// nenhum(só funcionario)
+				{
+					modelo.setAlAcesso(modelo.getAcessosFuncionario(acessos));
+					this.repaint();
+				}
+				
+				
+				this.repaint();
+			}
 		}
-		if (e.getSource() == bLimpar) {
-
+		if (e.getSource() == bLimpar)
+		{
+			ftfDataInicio.setText("");
+			ftfDataFim.setText("");
+			tfRazaoSocial.setText("");
+		
+		}
+		if (e.getSource() == rbData)
+		{
+			ftfDataInicio.setEnabled(true);
+			ftfDataFim.setEnabled(true);
+			tfRazaoSocial.setEnabled(false);
+		}
+		if (e.getSource() == rbEmpresa)
+		{
+			ftfDataInicio.setEnabled(false);
+			ftfDataFim.setEnabled(false);
+			tfRazaoSocial.setEnabled(true);
 		}
 	}
 
-	public void setComponentText() {
+	public void setComponentText()
+	{
 		bPesquisar.setText(bn.getString("telaConsultarAcesso.botao.pesquisar"));
 		bLimpar.setText(bn.getString("telaConsultarAcesso.botao.limpar"));
-		bConsultar.setText(bn.getString("telaConsultarAcesso.botao.consultar"));
 
 		lConsultarAcesso.setText(bn.getString("telaConsultarAcesso.label.consultaracesso"));
-		lData.setText(bn.getString("telaConsultarAcesso.label.data"));
-		lEmpresa.setText(bn.getString("telaConsultarAcesso.label.empresa"));
+		rbData.setText(bn.getString("telaConsultarAcesso.label.data"));
+		rbEmpresa.setText(bn.getString("telaConsultarAcesso.label.empresa"));
 		lTipoDeUsuario.setText(bn.getString("telaConsultarAcesso.label.tipodeusuario"));
-		rbSindico.setText(bn.getString("telaCadastrarUsuario.radioButton.sindico"));
-		rbAtendente.setText(bn.getString("telaCadastrarUsuario.radioButton.atendente"));
+		ckbSindico.setText(bn.getString("telaCadastrarUsuario.radioButton.sindico"));
+		ckbAtendente.setText(bn.getString("telaCadastrarUsuario.radioButton.atendente"));
 
 		mArquivo.setText(bn.getString("telaPrincipal.menu.arquivo"));
 		mEditar.setText(bn.getString("telaConsulta.menu.editar"));

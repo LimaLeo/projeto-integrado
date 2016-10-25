@@ -10,10 +10,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -29,6 +31,7 @@ import javax.swing.text.MaskFormatter;
 
 import br.com.saojudas.maven.projetointegrado.components.CreateLoginFile;
 import br.com.saojudas.maven.projetointegrado.components.CryptoAES;
+import br.com.saojudas.maven.projetointegrado.control.EmpresaCtrl;
 import br.com.saojudas.maven.projetointegrado.dao.EmpresaDao;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.TipoUsuario;
@@ -41,7 +44,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 	private JPasswordField pfSenha;
 	private ButtonGroup bgTipoUsuario, bgPermissao, bgLivreAcesso;
 	private JRadioButton rbSindico, rbAtendente, rbFuncionario, rbSimPerm, rbNaoPerm, rbSimLivre, rbNaoLivre;
-	private JButton bSalvar, bLimpar;
+	private JButton bSalvar, bLimpar, bCancelar;
 	private JFormattedTextField ftfCpf, ftfCnpj, ftfHorario;
 
 	// atributo de empresa dao
@@ -54,6 +57,8 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 	// atributos paineis
 	private JPanel pNorte, pCentro, pSul, pDadosUsuario, pDadosLogin;
 
+	// atributo JComboBox
+	private JComboBox<String> cbEmpresas;
 	// Container
 	Container container;
 
@@ -66,8 +71,13 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 	// atributo usuario
 	private static Usuario usuario;
 
+	private List<Empresa> empresas;
+	private EmpresaCtrl empresaCtrl;
+
 	// atributo status da tela
 	static EstadoTela estadoTela;
+	// atributo para controlar se o usuario confirmou alguma ação
+	static boolean confirma;
 
 	public TelaCadastrarUsuario(JFrame fr, Usuario usuario) {
 		// invoca o metodo construtor da superclasse
@@ -75,21 +85,23 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
-
+		confirma = false;
 		// configura o Container
 		container = getContentPane();
 		container.setLayout(new BorderLayout(20, 20));
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
 
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
 		getRootPane().setDefaultButton(bSalvar);
 
 		bLimpar = new JButton();
+		bCancelar = new JButton();
 
 		bSalvar.addActionListener(this);
 		bLimpar.addActionListener(this);
+		bCancelar.addActionListener(this);
 
 		// atributo configura o componente Titulo
 		lTitulo = new JLabel();
@@ -108,6 +120,16 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		lPermissao = new JLabel();
 		lLivreAcesso = new JLabel();
 
+		cbEmpresas = new JComboBox<String>();
+
+		// instancia empresas
+		empresaCtrl = new EmpresaCtrl();
+		empresas = empresaCtrl.consultarTodasEmpresas();
+
+		for (Empresa e : empresas) {
+			cbEmpresas.addItem(e.getRazaoSocial());
+		}
+
 		bgTipoUsuario = new ButtonGroup();
 		rbSindico = new JRadioButton();
 		rbAtendente = new JRadioButton();
@@ -116,7 +138,11 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		bgTipoUsuario.add(rbAtendente);
 		bgTipoUsuario.add(rbFuncionario);
 		rbSindico.setSelected(true);
-
+		
+		rbSindico.addActionListener(this);
+		rbAtendente.addActionListener(this);
+		rbFuncionario.addActionListener(this);
+		
 		bgPermissao = new ButtonGroup();
 		rbSimPerm = new JRadioButton();
 		rbNaoPerm = new JRadioButton();
@@ -154,7 +180,8 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		ftfCpf = new JFormattedTextField(mascaraCpf);
 		ftfCnpj = new JFormattedTextField(mascaraCnpj);
 		ftfHorario = new JFormattedTextField(mascaraHorario);
-
+		ftfHorario.setEnabled(false);
+		
 		// instancia paineis
 		pNorte = new JPanel(new GridLayout(1, 1, 5, 5));
 		pCentro = new JPanel(new BorderLayout());
@@ -254,6 +281,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		gBC.gridx = 1;
 		gBC.gridy = 7;
 		gBC.insets = new Insets(5, 5, 5, 5);
+		// pDadosUsuario.add(cbEmpresas, gBC);
 		pDadosUsuario.add(ftfCnpj, gBC);
 
 		gBC.gridx = 0;
@@ -297,7 +325,12 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pSul.add(bLimpar, gBC);
-
+		
+		gBC.gridx = 2;
+		gBC.gridy = 0;
+		gBC.insets = new Insets(5, 5, 5, 5);
+		pSul.add(bCancelar, gBC);
+		
 		gBC.gridx = 0;
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 5, 5);
@@ -333,6 +366,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		setComponentText();
 
 		// congifura o painel
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(650, 700);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -379,13 +413,36 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 					}
 
 					// busca a empresa do usuario
-					empresa = empresaDao.consultaEmpresa(
-							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
-					// instancia objeto usuario
-					usuario = new Usuario(tfNome.getText(),
-							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
-							sSenhaCifrada, ftfHorario.getText().replace("_", ""), tipoUsuario,
-							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
+					// empresa =
+					// empresaCtrl.consultaEmpresa(empresas.get(cbEmpresas.getSelectedIndex()).getCnpj());
+
+					String horario = "";
+					//Verifica horario
+					if(rbFuncionario.isSelected())
+					{
+						horario = ftfHorario.getText().replace("_", "");
+						empresa = empresaCtrl.consultaEmpresa(
+								ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+						// instancia objeto usuario
+						usuario = new Usuario(tfNome.getText(),
+								ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
+								sSenhaCifrada, horario, tipoUsuario,
+								(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
+
+					}
+					else
+					{
+						horario = "";
+						empresa = empresaCtrl.consultaEmpresa(
+								ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+						// instancia objeto usuario
+						usuario = new Usuario(tfNome.getText(),
+								ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
+								sSenhaCifrada, horario, tipoUsuario,
+								(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa, true);
+
+					}
+					
 
 					dispose();
 
@@ -428,13 +485,18 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 						e1.printStackTrace();
 					}
 
-					empresa = empresaDao.consultaEmpresa(
-							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""));
+					//empresa = empresaCtrl.consultaEmpresa(empresas.get(cbEmpresas.getSelectedIndex()).getCnpj());
+
+					 empresa = empresaDao.consultaEmpresa(ftfCnpj.getText().replace("_", "").replace(".","").replace("-", "").replace("/", ""));
+
 					usuario = new Usuario(tfNome.getText(),
 							ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""), tfLogin.getText(),
 							sSenhaCifrada, ftfHorario.getText().replace("_", ""), tipoUsuario,
 							(rbSimLivre.isSelected()) ? true : false, (rbSimPerm.isSelected()) ? true : false, empresa);
-
+					//Confirma que o usuario clicou no botao
+					confirma = true;
+					
+					
 					dispose();
 				} catch (Exception f) {
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
@@ -452,6 +514,21 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 			ftfCpf.setText("");
 			ftfCnpj.setText("");
 			ftfHorario.setText("");
+		}
+		
+		if (e.getSource() == bCancelar)
+		{
+			this.dispose();			
+		}
+		
+		if(e.getSource() == rbFuncionario)
+		{
+			ftfHorario.setEnabled(true);
+		}
+		
+		if(e.getSource() == rbAtendente || e.getSource() == rbSindico)
+		{
+			ftfHorario.setEnabled(false);
 		}
 	}
 
@@ -478,6 +555,7 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 
 		bSalvar.setText(bn.getString("telaCadastrarUsuario.button.salvar"));
 		bLimpar.setText(bn.getString("telaCadastrarUsuario.button.limpar"));
+		bCancelar.setText("Cancelar");
 		setTitle(bn.getString("telaCadastrarUsuario.label.titulo"));
 
 	}
@@ -496,16 +574,46 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 		if (estadoTela == EstadoTela.CONSULTAR) {
 			tfNome.setText(usuario.getNome());
 			tfLogin.setText(usuario.getLogin());
-			pfSenha.setText(usuario.getSenha());
 			ftfCpf.setText(usuario.getCpf());
 			if (usuario.getEmpresa() != null) {
 				ftfCnpj.setText(usuario.getEmpresa().getCnpj());
 			}
 			ftfHorario.setText(usuario.getHorarioDeAcesso());
+			
+			
+			//Descritografa senha
+			
+			// Instancia um objeto da classe CryptoAES
+			CryptoAES caes = new CryptoAES();
 
+			// senha em byte
+			byte[] bSenha = null;
+			// senha criptografada em byte
+			byte[] bSenhaDecifrada = null;
+			// senha cifrada Hexadecimal
+			String sSenhaDecifrada = "";
+			try
+			{
+				//Decifra
+				bSenha = caes.toHex(usuario.getSenha());
+				File chave = new File("chave.simetrica");		
+				caes.geraDecifra(bSenha, chave);
+					
+				bSenhaDecifrada= caes.getTextoDecifrado();
+						
+				sSenhaDecifrada = (new String(bSenhaDecifrada, "ISO-8859-1"));							
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+			//Fecha decifra
+			pfSenha.setText(sSenhaDecifrada);
+			
 			// desativa a edição
 			bSalvar.setEnabled(false);
 			bLimpar.setEnabled(false);
+			bCancelar.setEnabled(true);
 			rbSindico.setEnabled(false);
 			rbAtendente.setEnabled(false);
 			rbFuncionario.setEnabled(false);
@@ -520,8 +628,18 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 			ftfCnpj.setEnabled(false);
 			ftfHorario.setEnabled(false);
 		} else if (estadoTela == EstadoTela.CADASTRAR) {
-
+			if(TelaPrincipal.nivelAcesso == 2)
+			{
+				rbSindico.setEnabled(false);
+				rbAtendente.setSelected(true);
+			}
 		} else {
+			
+			if(TelaPrincipal.nivelAcesso == 2)
+			{
+				rbSindico.setEnabled(false);
+				rbAtendente.setSelected(true);
+			}
 			tfNome.setText(usuario.getNome());
 			tfLogin.setText(usuario.getLogin());
 			pfSenha.setText(usuario.getSenha());
@@ -530,11 +648,39 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 				ftfCnpj.setText(usuario.getEmpresa().getCnpj());
 			}
 			ftfHorario.setText(usuario.getHorarioDeAcesso());
+			
+//Descritografa senha
+			
+			// Instancia um objeto da classe CryptoAES
+			CryptoAES caes = new CryptoAES();
 
+			// senha em byte
+			byte[] bSenha = null;
+			// senha criptografada em byte
+			byte[] bSenhaDecifrada = null;
+			// senha cifrada Hexadecimal
+			String sSenhaDecifrada = "";
+			try
+			{
+				//Decifra
+				bSenha = caes.toHex(usuario.getSenha());
+				File chave = new File("chave.simetrica");		
+				caes.geraDecifra(bSenha, chave);
+					
+				bSenhaDecifrada= caes.getTextoDecifrado();
+						
+				sSenhaDecifrada = (new String(bSenhaDecifrada, "ISO-8859-1"));							
+			}
+			catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+			//Fecha decifra
+			pfSenha.setText(sSenhaDecifrada);
+			
 			// desativa a edição
 			bSalvar.setEnabled(true);
 			bLimpar.setEnabled(true);
-			rbSindico.setEnabled(true);
 			rbAtendente.setEnabled(true);
 			rbFuncionario.setEnabled(true);
 			rbNaoPerm.setEnabled(true);
@@ -546,8 +692,8 @@ public class TelaCadastrarUsuario extends JDialog implements ActionListener {
 			pfSenha.setEnabled(true);
 			ftfCpf.setEnabled(true);
 			ftfCnpj.setEnabled(true);
-			ftfHorario.setEnabled(true);
 		}
 	}
-
+	
+	
 }

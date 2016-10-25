@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.FormatterClosedException;
 import java.util.List;
 import java.util.Locale;
@@ -57,12 +59,17 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 	// atributo para manipulacao de idiomas
 	public static ResourceBundle bn = null;
 
+	// TipoUsuario 1-Sindico 2-Atendente 3-Funcionario
+	public static int nivelAcesso = 1;
+	public static String cpfLogado = "";
+	public static String nomeLogado = "";
+
 	// atributos paineis
 	private JPanel pMenusSistemaControlePredial, pMain, pMenuSistemaDeCatraca, pHeader, pFooter, pConfiguracoes;
 
 	// tela de login
 	private TelaLogin telaLogin;
-
+	
 	// componentes para o Ar Condicionado
 	private CreateACFile cacf;
 	private ReadACFile racf;
@@ -78,7 +85,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
 
 		// instancia abas
 		abas = new JTabbedPane();
@@ -268,6 +275,8 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		// metodo que atualiza o texto de todos os componentes
 		bn = TelaLogin.bn;
 		setComponentText();
+		validarNivelDeAcesso();
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -307,7 +316,6 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		if (e.getSource() == bConsultarAcesso) {
 			TelaConsultarAcesso telaConsultarAcesso = new TelaConsultarAcesso(this);
 		}
-
 		if (e.getSource() == bEnviarReconfiguracaoDeTemperatura) {
 			cacf = new CreateACFile();
 			racf = new ReadACFile();
@@ -355,11 +363,13 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 			} catch (IllegalStateException stateException) {
 				System.err.println("Error reading from file.");
 				System.exit(1);
-			} catch (IOException e1) {
+			}
+
+			catch (IOException e1) {
 				e1.printStackTrace();
 			}
-		}
 
+		}
 	}
 
 	public void setComponentText() {
@@ -375,7 +385,11 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		bSairCatraca.setText("Sair Catraca");
 		bConsultarAcesso.setText(bn.getString("telaPrincipal.botao.consultaracesso"));
 
-		lBoasVidas.setText(bn.getString("telaPrincipal.label.boasvidas"));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm - dd/MM/yyyy");
+		Date agora = new Date();
+		String horaData = dateFormat.format(agora);
+
+		lBoasVidas.setText(bn.getString("telaPrincipal.label.boasvidas") + " " + nomeLogado + " - " + horaData);
 		lAdministracao.setText(bn.getString("telaPrincipal.label.gerenciador"));
 		lEnviarArquivoDeAcesso.setText(bn.getString("telaPrincipal.label.arquivodeacesso"));
 		lEnviarReconfiguracaoDeTemperatura.setText(bn.getString("telaPrincipal.label.reconfiguracaotemperatura"));
@@ -393,5 +407,17 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 		// atualiza title
 		setTitle(bn.getString("telaPrincipal.title"));
+	}
+
+	public void validarNivelDeAcesso() {
+
+		if (nivelAcesso == 2) {
+			bConsultarAcesso.setEnabled(false);
+		} else if (nivelAcesso == 3) {
+			bManterUsuario.setEnabled(false);
+			bConsultarAcesso.setEnabled(false);
+			bEnviarArquivoDeAcesso.setEnabled(false);
+			bEnviarReconfiguracaoDeTemperatura.setEnabled(false);
+		}
 	}
 }

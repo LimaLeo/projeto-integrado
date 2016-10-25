@@ -17,6 +17,18 @@ public class EmpresaCtrl {
 		return empresas;
 	}
 	
+	public List<Empresa> consultarTodasEmpresasRazaoSocial(String razao)
+	{
+		List<Empresa> empresas = dao.consultarTodasEmpresasRazaoSocial(razao);
+		return empresas;
+	}
+	
+	public List<Empresa> consultarEmpresaCnpj(String cnpj)
+	{
+		List<Empresa> empresas = dao.consultarEmpresaCnpj(cnpj);
+		return empresas;
+	}
+	
 	public Empresa consultaEmpresa(String cnpj)
 	{	
 		Empresa empresa = dao.consultaEmpresa(cnpj);

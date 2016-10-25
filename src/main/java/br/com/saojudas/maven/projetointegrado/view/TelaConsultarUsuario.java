@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -22,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -36,12 +38,15 @@ import br.com.saojudas.maven.projetointegrado.components.TableModelUsuario;
 import br.com.saojudas.maven.projetointegrado.control.UsuarioCtrl;
 import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
-public class TelaConsultarUsuario extends JFrame implements ActionListener {
+public class TelaConsultarUsuario extends JFrame implements ActionListener
+{
 	// atributos para formulario
 	private JButton bPesquisar, bLimpar, bCadastrar, bAlterar, bConsultar;
-	private JLabel lConsultarUsuario, lCpf, lNome;
+	private JLabel lConsultarUsuario;
 	private JTextField tfNome;
 	private JFormattedTextField ftfCpf;
+	private ButtonGroup bgFiltroBusca;
+	private JRadioButton rbCpf, rbNome;
 
 	// atributo classe controller
 	private UsuarioCtrl usuarioCtrl;
@@ -69,7 +74,8 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 	static EstadoTela alteraEstadoTela;
 
-	public TelaConsultarUsuario() {
+	public TelaConsultarUsuario()
+	{
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
@@ -77,7 +83,18 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
+
+		// instancia radioButtons
+		rbCpf = new JRadioButton();
+		rbNome = new JRadioButton();
+		bgFiltroBusca = new ButtonGroup();
+		bgFiltroBusca.add(rbCpf);
+		bgFiltroBusca.add(rbNome);
+		rbCpf.setSelected(true);
+
+		rbCpf.addActionListener(this);
+		rbNome.addActionListener(this);
 
 		// instancia botoes
 		bPesquisar = new JButton();
@@ -95,8 +112,6 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 		// instancia label
 		lConsultarUsuario = new JLabel();
-		lCpf = new JLabel();
-		lNome = new JLabel();
 
 		// edicao de titulo
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
@@ -106,12 +121,16 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 		// instancia campo texto
 		tfNome = new JTextField(15);
+		tfNome.setEnabled(false);
 
 		// instancia mascara
-		try {
+		try
+		{
 			mascaraCpf = new MaskFormatter("###.###.###-##");
 			mascaraCpf.setPlaceholderCharacter('_');
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.err.println("Erro na formata��o: " + e.getMessage());
 			System.exit(-1);
 		}
@@ -130,8 +149,10 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		miNovoCadastro = new JMenuItem();
 
 		// listener item de menu
-		miNovoCadastro.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
+		miNovoCadastro.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent event)
+			{
 				TelaCadastrarUsuario tCU = new TelaCadastrarUsuario(null, null);
 			}
 		});
@@ -153,8 +174,9 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 		// instancia modelo
 		modelo = new TableModelUsuario();
-		String[] colunas = { bn.getString("telaConsulta.columnname.tipousuario"),
-				bn.getString("telaConsulta.columnname.nome"), bn.getString("telaConsulta.columnname.cpf"), };
+		String[] colunas =
+		{ bn.getString("telaConsulta.columnname.tipousuario"), bn.getString("telaConsulta.columnname.nome"),
+				bn.getString("telaConsulta.columnname.cpf"), };
 		modelo.setColunas(colunas);
 
 		// instancia e atribui os usuarios cadastrados no banco
@@ -201,7 +223,7 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		gBC.gridx = 0;
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lCpf, gBC);
+		pForm.add(rbCpf, gBC);
 
 		gBC.gridx = 1;
 		gBC.gridy = 0;
@@ -209,24 +231,24 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pForm.add(ftfCpf, gBC);
 
-		gBC.gridx = 2;
-		gBC.gridy = 0;
+		gBC.gridx = 0;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lNome, gBC);
+		pForm.add(rbNome, gBC);
 
-		gBC.gridx = 3;
-		gBC.gridy = 0;
+		gBC.gridx = 1;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		gBC.weightx = 4;
 		pForm.add(tfNome, gBC);
 
 		gBC.gridx = 0;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		gBC.insets = new Insets(15, 5, 5, 5);
 		pForm.add(bPesquisar, gBC);
 
 		gBC.gridx = 1;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		gBC.insets = new Insets(15, 5, 5, 5);
 		pForm.add(bLimpar, gBC);
 
@@ -266,21 +288,41 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		// setExtendedState(MAXIMIZED_BOTH);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bPesquisar) {
-			// carrega usuarios
-			modelo.setAlUsuario(usuarios);
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == bPesquisar)
+		{
 
-			// procura usuario
-			modelo.procuraUsuario(ftfCpf.getText().replace("_", "").replace(".", "").replace("-", ""),
-					tfNome.getText());
+			// Verifica se a busca é por cpf ou nome
+
+			if (rbCpf.isSelected())
+			{
+				String cpf = ftfCpf.getText().replace("_", "").replace(".", "").replace("-", "");
+				usuarios = (ArrayList) usuarioCtrl.consultarTodosUsuarioCpf(cpf);
+
+				// carrega empresas atuais
+				modelo.setAlUsuario(usuarios);
+				this.repaint();
+			}
+			else
+			{
+				String nome = tfNome.getText();
+				usuarios = (ArrayList) usuarioCtrl.consultarTodosUsuarioNome(nome);
+
+				// carrega empresas atuais
+				modelo.setAlUsuario(usuarios);
+				this.repaint();
+			}
 		}
-		if (e.getSource() == bLimpar) {
+		if (e.getSource() == bLimpar)
+		{
 			ftfCpf.setText("");
 			tfNome.setText("");
 		}
-		if (e.getSource() == bCadastrar) {
-			try {
+		if (e.getSource() == bCadastrar)
+		{
+			try
+			{
 				alteraEstadoTela = EstadoTela.CADASTRAR;
 				Usuario usuario = TelaCadastrarUsuario.cadastrarUsuario(this);
 
@@ -292,13 +334,17 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 				// carrega usuarios
 				modelo.setAlUsuario(usuarios);
 
-			} catch (Exception e2) {
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Usuario nao foi cadastrado!", "Erro ao cadastrar",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (e.getSource() == bConsultar) {
-			try {
+		if (e.getSource() == bConsultar)
+		{
+			try
+			{
 				// chama a linha selecionada
 				int linhaSelecionada = this.tTabela.getSelectedRow();
 				Usuario usuario = new Usuario();
@@ -309,48 +355,80 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 
 				// usuario = usuarioCtrl.consultaUsuario(usuario.getCpf());
 				// System.out.println(usuario.getId());
-			} catch (Exception e2) {
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Selecione um dos itens listados (clique sobre ele)!",
 						"Erro ao selecionar", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (e.getSource() == bAlterar) {
-			try {
+		if (e.getSource() == bAlterar)
+		{
+			try
+			{
 				// chama a linha selecionada
 				int linhaSelecionada = this.tTabela.getSelectedRow();
 				Usuario usuario = new Usuario();
 				Usuario pegaUsuario = modelo.carregaUsuario(linhaSelecionada);
-
+				
 				alteraEstadoTela = EstadoTela.ALTERAR;
-
+				
+				if(TelaPrincipal.nivelAcesso == 2)
+				{
+					String tipo = ""+pegaUsuario.getTipoUsuario();
+					if(tipo.equals("SINDICO"))
+					{
+						JOptionPane.showMessageDialog(null, "Você não tem permissao para alterar um Sindico!");
+						return;
+					}
+				}
 				// carrega usuario do banco
 				usuario = TelaCadastrarUsuario.alteraUsuario(null, pegaUsuario);
-
+				
+				
+				
 				// altera conforme campo alterado
-				pegaUsuario.setNome(usuario.getNome());
-				pegaUsuario.setCpf(usuario.getCpf());
-				pegaUsuario.setLogin(usuario.getLogin());
-				pegaUsuario.setSenha(usuario.getSenha());
-				pegaUsuario.setHorarioDeAcesso(usuario.getHorarioDeAcesso());
-				pegaUsuario.setTipoUsuario(usuario.getTipoUsuario());
-				pegaUsuario.setAcessoLivre(usuario.isAcessoLivre());
-				pegaUsuario.setPermissaoAlterarTemperatura(usuario.isPermissaoAlterarTemperatura());
-				pegaUsuario.setEmpresa(usuario.getEmpresa());
+				if (TelaCadastrarUsuario.confirma == true)
+				{
+					pegaUsuario.setNome(usuario.getNome());
+					pegaUsuario.setCpf(usuario.getCpf());
+					pegaUsuario.setLogin(usuario.getLogin());
+					pegaUsuario.setSenha(usuario.getSenha());
+					pegaUsuario.setHorarioDeAcesso(usuario.getHorarioDeAcesso());
+					pegaUsuario.setTipoUsuario(usuario.getTipoUsuario());
+					pegaUsuario.setAcessoLivre(usuario.isAcessoLivre());
+					pegaUsuario.setPermissaoAlterarTemperatura(usuario.isPermissaoAlterarTemperatura());
+					pegaUsuario.setEmpresa(usuario.getEmpresa());
 
-				// faz o merge dos dados alterados
-				usuarioCtrl.alteraUsuario(pegaUsuario.getId(), pegaUsuario);
-
+					// faz o merge dos dados alterados
+					usuarioCtrl.alteraUsuario(pegaUsuario.getId(), pegaUsuario);
+				}
 				// atualiza lista
 				modelo.setAlUsuario(usuarios);
 
-			} catch (Exception e2) {
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Usuario nao foi alterado!", "Erro ao alterar",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+
+		if (e.getSource() == rbCpf)
+		{
+			ftfCpf.setEnabled(true);
+			tfNome.setEnabled(false);
+		}
+
+		if (e.getSource() == rbNome)
+		{
+			ftfCpf.setEnabled(false);
+			tfNome.setEnabled(true);
+		}
 	}
 
-	public void setComponentText() {
+	public void setComponentText()
+	{
 		bPesquisar.setText(bn.getString("telaConsultarEmpresa.botao.pesquisar"));
 		bLimpar.setText(bn.getString("telaConsultarEmpresa.botao.limpar"));
 		bCadastrar.setText(bn.getString("telaConsultarEmpresa.botao.cadastrar"));
@@ -358,8 +436,8 @@ public class TelaConsultarUsuario extends JFrame implements ActionListener {
 		bConsultar.setText(bn.getString("telaConsultarEmpresa.botao.consultar"));
 
 		lConsultarUsuario.setText(bn.getString("telaConsultarUsuario.label.consultarusuario"));
-		lCpf.setText(bn.getString("telaConsultarUsuario.label.cpf"));
-		lNome.setText(bn.getString("telaConsultarUsuario.label.nome"));
+		rbCpf.setText(bn.getString("telaConsultarUsuario.label.cpf"));
+		rbNome.setText(bn.getString("telaConsultarUsuario.label.nome"));
 
 		mArquivo.setText(bn.getString("telaPrincipal.menu.arquivo"));
 		mEditar.setText(bn.getString("telaConsulta.menu.editar"));

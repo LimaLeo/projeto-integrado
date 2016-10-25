@@ -18,6 +18,11 @@ public class AcessoCtrl {
 		return acessos;
 	}
 	
+	public List<Acesso> consultarTodosAcessosData(String dataIni, String dataFim) {
+		List<Acesso> acessos = dao.consultarTodosAcessosData(dataIni, dataFim);
+		return acessos;
+	}
+	
 	public Acesso consultarAcesso(Usuario usuario)
 	{
 		Acesso acesso = dao.consultaAcessoUsuario(usuario);

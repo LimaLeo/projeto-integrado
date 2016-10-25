@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -23,6 +24,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -36,16 +38,20 @@ import javax.swing.text.MaskFormatter;
 import br.com.saojudas.maven.projetointegrado.components.TableModelEmpresa;
 import br.com.saojudas.maven.projetointegrado.control.ConjuntoCtrl;
 import br.com.saojudas.maven.projetointegrado.control.EmpresaCtrl;
-import br.com.saojudas.maven.projetointegrado.model.Conjunto;
+import br.com.saojudas.maven.projetointegrado.control.UsuarioCtrl;
 import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.ItemCadastroEmpresa;
+import br.com.saojudas.maven.projetointegrado.model.Usuario;
 
-public class TelaConsultarEmpresa extends JFrame implements ActionListener {
+public class TelaConsultarEmpresa extends JFrame implements ActionListener
+{
 	// atributos para formulario
 	private JButton bPesquisar, bLimpar, bCadastrar, bAlterar, bConsultar;
-	private JLabel lConsultarEmpresa, lCnpj, lRazaoSocial;
+	private JLabel lConsultarEmpresa;
 	private JTextField tfRazaoSocial;
 	private JFormattedTextField ftfCnpj;
+	private ButtonGroup bgFiltroBusca;
+	private JRadioButton rbCnpj, rbRazaoSocial;
 
 	// atributo classe controller
 	private EmpresaCtrl empresaCtrl;
@@ -78,7 +84,8 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 	private ConjuntoCtrl conjuntoCtrl;
 
-	public TelaConsultarEmpresa() {
+	public TelaConsultarEmpresa()
+	{
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
 
@@ -86,12 +93,23 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		container.setLayout(new BorderLayout());// instancia e atribui ao
 		// layout border
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
 
 		// instancia icones
 		iCreate = new ImageIcon("../image/ICONES-CRUD-02.jpg");
 		iRead = new ImageIcon("../image/ICONES-CRUD-01.jpg");
 		iUpdate = new ImageIcon("../image/ICONES-CRUD-03.jpg");
+
+		// instancia radioButtons
+		rbCnpj = new JRadioButton();
+		rbRazaoSocial = new JRadioButton();
+		bgFiltroBusca = new ButtonGroup();
+		bgFiltroBusca.add(rbCnpj);
+		bgFiltroBusca.add(rbRazaoSocial);
+		rbCnpj.setSelected(true);
+
+		rbCnpj.addActionListener(this);
+		rbRazaoSocial.addActionListener(this);
 
 		// instancia botoes
 		bPesquisar = new JButton();
@@ -109,8 +127,6 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 		// instancia label
 		lConsultarEmpresa = new JLabel();
-		lCnpj = new JLabel();
-		lRazaoSocial = new JLabel();
 
 		// edicao de titulo
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
@@ -120,12 +136,16 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 		// instancia campo texto
 		tfRazaoSocial = new JTextField(15);
+		tfRazaoSocial.setEnabled(false);
 
 		// instancia mascara
-		try {
+		try
+		{
 			mascaraCnpj = new MaskFormatter("##.###.###/####-##");
 			mascaraCnpj.setPlaceholderCharacter('_');
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.err.println("Erro na formata��o: " + e.getMessage());
 			System.exit(-1);
 		}
@@ -144,8 +164,10 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		miNovoCadastro = new JMenuItem();
 
 		// listener item de menu
-		miNovoCadastro.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
+		miNovoCadastro.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent event)
+			{
 				TelaCadastrarEmpresa tCE = new TelaCadastrarEmpresa(null, null);
 			}
 		});
@@ -167,8 +189,8 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 		// instancia modelo
 		modelo = new TableModelEmpresa();
-		String[] colunas = { bn.getString("telaConsulta.columnname.cnpj"),
-				bn.getString("telaConsulta.columnname.razaosocial"),
+		String[] colunas =
+		{ bn.getString("telaConsulta.columnname.cnpj"), bn.getString("telaConsulta.columnname.razaosocial"),
 				bn.getString("telaConsulta.columnname.horariofuncionamento"),
 				bn.getString("telaConsulta.columnname.temperaturamaxima") };
 		modelo.setColunas(colunas);
@@ -220,7 +242,7 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		gBC.gridx = 0;
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lCnpj, gBC);
+		pForm.add(rbCnpj, gBC);
 
 		gBC.gridx = 1;
 		gBC.gridy = 0;
@@ -228,24 +250,24 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pForm.add(ftfCnpj, gBC);
 
-		gBC.gridx = 2;
-		gBC.gridy = 0;
+		gBC.gridx = 0;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
-		pForm.add(lRazaoSocial, gBC);
+		pForm.add(rbRazaoSocial, gBC);
 
-		gBC.gridx = 3;
-		gBC.gridy = 0;
+		gBC.gridx = 1;
+		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		gBC.weightx = 4;
 		pForm.add(tfRazaoSocial, gBC);
 
 		gBC.gridx = 0;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		gBC.insets = new Insets(15, 5, 5, 5);
 		pForm.add(bPesquisar, gBC);
 
 		gBC.gridx = 1;
-		gBC.gridy = 1;
+		gBC.gridy = 2;
 		gBC.insets = new Insets(15, 5, 5, 5);
 		pForm.add(bLimpar, gBC);
 
@@ -283,17 +305,43 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		setLocation(350, 80);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);
+		validarNivelAcesso();
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bPesquisar) {
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == bPesquisar)
+		{
+			// Verifica se a busca é por cnpj ou razao social
 
-		}
-		if (e.getSource() == bLimpar) {
+			if (rbCnpj.isSelected())
+			{
+				String cnpj = ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", "");
+				empresas = (ArrayList) empresaCtrl.consultarEmpresaCnpj(cnpj);
 
+				// carrega empresas atuais
+				modelo.setAlEmpresa(empresas);
+				this.repaint();
+			}
+			else
+			{
+				String razao = tfRazaoSocial.getText();
+				empresas = (ArrayList) empresaCtrl.consultarTodasEmpresasRazaoSocial(razao);
+
+				// carrega empresas atuais
+				modelo.setAlEmpresa(empresas);
+				this.repaint();
+			}
 		}
-		if (e.getSource() == bCadastrar) {
-			try {
+		if (e.getSource() == bLimpar)
+		{
+			tfRazaoSocial.setText("");
+			ftfCnpj.setText("");
+		}
+		if (e.getSource() == bCadastrar)
+		{
+			try
+			{
 				alteraEstadoTela = EstadoTela.CADASTRAR;
 				ItemCadastroEmpresa iCE = TelaCadastrarEmpresa.cadastrarEmpresa(this);
 
@@ -311,13 +359,17 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 				// carrega usuarios
 				modelo.setAlEmpresa(empresas);
 
-			} catch (Exception e2) {
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Empresa nao foi cadastrada!", "Erro ao cadastrar",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (e.getSource() == bConsultar) {
-			try {
+		if (e.getSource() == bConsultar)
+		{
+			try
+			{
 				// chama a linha selecionada
 				int linhaSelecionada = this.tTabela.getSelectedRow();
 				Empresa empresa = new Empresa();
@@ -328,49 +380,85 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 				// usuario = usuarioCtrl.consultaUsuario(usuario.getCpf());
 				// System.out.println(usuario.getId());
-			} catch (Exception e2) {
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Selecione um dos itens listados (clique sobre ele)!",
 						"Erro ao selecionar", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (e.getSource() == bAlterar) {
-			try {
+		if (e.getSource() == bAlterar)
+		{
+			try
+			{
 				// chama a linha selecionada
 				int linhaSelecionada = this.tTabela.getSelectedRow();
 				Empresa empresa = new Empresa();
 				Empresa pegaEmpresa = modelo.carregaEmpresa(linhaSelecionada);
 
-				alteraEstadoTela = EstadoTela.ALTERAR;
+				UsuarioCtrl usuarioCtrl = new UsuarioCtrl();
+				Usuario usuarioLogado = usuarioCtrl.consultaUsuario(TelaPrincipal.cpfLogado);
 
-				// carrega usuario do banco
-				ItemCadastroEmpresa iCE = TelaCadastrarEmpresa.alteraEmpresa(null, pegaEmpresa);
+				if (TelaPrincipal.nivelAcesso == 3
+						&& !usuarioLogado.getEmpresa().getCnpj().equals(pegaEmpresa.getCnpj())						)
+				{
+					JOptionPane.showMessageDialog(null, "Funcionario só pode alterar a sua empresa!");
+				}
+				else if(!usuarioLogado.isPermissaoAlterarTemperatura())
+				{
+					JOptionPane.showMessageDialog(null, "Funcionario não tem permissao para alterar temperatura");
+				}
+					else
+				{
 
-				// altera conforme campo alterado
-				pegaEmpresa.setCnpj(iCE.getEmpresa().getCnpj());
-				pegaEmpresa.setRazaoSocial(iCE.getEmpresa().getRazaoSocial());
-				pegaEmpresa.setHorarioDeFuncionamento(iCE.getEmpresa().getHorarioDeFuncionamento());
-				pegaEmpresa.setTemperaturaMaximaArCondicionado(iCE.getEmpresa().getTemperaturaMaximaArCondicionado());
+					alteraEstadoTela = EstadoTela.ALTERAR;
 
-				// faz o merge dos dados alterados
-				empresaCtrl.alteraEmpresa(pegaEmpresa.getId(), pegaEmpresa);
-				Empresa empresaAlterada = empresaCtrl.consultaEmpresa(iCE.getEmpresa().getCnpj());
-				System.out.println(empresaAlterada.getId());
-				System.out.println(iCE.getConjunto().getId_conjunto());
+					// carrega usuario do banco
+					ItemCadastroEmpresa iCE = TelaCadastrarEmpresa.alteraEmpresa(null, pegaEmpresa);
 
-				// faz update do conjunto
-				conjuntoCtrl.alteraConjunto(iCE.getConjunto().getId_conjunto(), empresaAlterada);
+					// altera conforme campo alterado
+					if (TelaCadastrarEmpresa.confirma == true)
+					{
+						pegaEmpresa.setCnpj(iCE.getEmpresa().getCnpj());
+						pegaEmpresa.setRazaoSocial(iCE.getEmpresa().getRazaoSocial());
+						pegaEmpresa.setHorarioDeFuncionamento(iCE.getEmpresa().getHorarioDeFuncionamento());
+						pegaEmpresa.setTemperaturaMaximaArCondicionado(
+								iCE.getEmpresa().getTemperaturaMaximaArCondicionado());
 
-				// atualiza lista
-				modelo.setAlEmpresa(empresas);
+						// faz o merge dos dados alterados
+						empresaCtrl.alteraEmpresa(pegaEmpresa.getId(), pegaEmpresa);
+						Empresa empresaAlterada = empresaCtrl.consultaEmpresa(iCE.getEmpresa().getCnpj());
+						System.out.println(empresaAlterada.getId());
+						System.out.println(iCE.getConjunto().getId_conjunto());
 
-			} catch (Exception e2) {
+						// faz update do conjunto
+						conjuntoCtrl.alteraConjunto(iCE.getConjunto().getId_conjunto(), empresaAlterada);
+					}
+
+					// atualiza lista
+					modelo.setAlEmpresa(empresas);
+				}
+			}
+			catch (Exception e2)
+			{
 				JOptionPane.showMessageDialog(null, "Empresa nao foi alterada!", "Erro ao alterar",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		if (e.getSource() == rbCnpj)
+		{
+			ftfCnpj.setEnabled(true);
+			tfRazaoSocial.setEnabled(false);
+		}
+		if (e.getSource() == rbRazaoSocial)
+		{
+			ftfCnpj.setEnabled(false);
+			tfRazaoSocial.setEnabled(true);
+		}
 	}
 
-	public void setComponentText() {
+	public void setComponentText()
+	{
 		bPesquisar.setText(bn.getString("telaConsultarEmpresa.botao.pesquisar"));
 		bLimpar.setText(bn.getString("telaConsultarEmpresa.botao.limpar"));
 		bCadastrar.setText(bn.getString("telaConsultarEmpresa.botao.cadastrar"));
@@ -378,8 +466,9 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 		bConsultar.setText(bn.getString("telaConsultarEmpresa.botao.consultar"));
 
 		lConsultarEmpresa.setText(bn.getString("telaConsultarEmpresa.label.consultarempresa"));
-		lCnpj.setText(bn.getString("telaConsultarEmpresa.label.cnpj"));
-		lRazaoSocial.setText(bn.getString("telaConsultarEmpresa.label.razaosocial"));
+
+		rbCnpj.setText(bn.getString("telaConsultarEmpresa.label.cnpj"));
+		rbRazaoSocial.setText(bn.getString("telaConsultarEmpresa.label.razaosocial"));
 
 		mArquivo.setText(bn.getString("telaPrincipal.menu.arquivo"));
 		mEditar.setText(bn.getString("telaConsulta.menu.editar"));
@@ -395,5 +484,13 @@ public class TelaConsultarEmpresa extends JFrame implements ActionListener {
 
 		setTitle(bn.getString("telaConsultarEmpresa.title"));
 
+	}
+
+	public void validarNivelAcesso()
+	{
+		if (TelaPrincipal.nivelAcesso == 3)
+		{
+			bCadastrar.setEnabled(false);
+		}
 	}
 }

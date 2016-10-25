@@ -1,5 +1,6 @@
 package br.com.saojudas.maven.projetointegrado.model;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -77,6 +78,19 @@ public class Usuario {
 		setPermissaoAlterarTemperatura(permissaoAlterarTemperatura);
 		setEmpresa(empresa_usuario);
 	}
+	
+	public Usuario(String nome, String cpf, String login, String senha, String horarioDeAcesso, TipoUsuario tipoUSuario,
+			boolean acessoLivre, boolean permissaoAlterarTemperatura, Empresa empresa_usuario, boolean nada) {
+		setNome(nome);
+		setCpf(cpf);
+		setLogin(login);
+		setSenha(senha);
+		this.horarioDeAcesso = horarioDeAcesso;
+		setTipoUsuario(tipoUSuario);
+		setAcessoLivre(acessoLivre);
+		setPermissaoAlterarTemperatura(permissaoAlterarTemperatura);
+		setEmpresa(empresa_usuario);
+	}
 
 	public Integer getId() {
 		return id;
@@ -148,11 +162,19 @@ public class Usuario {
 	}
 
 	public void setHorarioDeAcesso(String horarioDeAcesso) {
+		String horarioEntrada = horarioDeAcesso.substring(0,5);		
+		String horarioSaida = horarioDeAcesso.substring(8, 13);
+		
 		if (horarioDeAcesso == null) {
 			throw new RuntimeException("O horario de acesso nao pode ser nulo!");
 		} else if (horarioDeAcesso.trim().equals("")) {
 			throw new RuntimeException("O horario de acesso nao pode ser vazio!");
-		} else {
+		} else if ( validarHoras(horarioEntrada) == false || validarHoras(horarioSaida) == false)
+		{
+			throw new RuntimeException("Horario inválido!");			
+		}
+		else			
+		{
 			this.horarioDeAcesso = horarioDeAcesso;
 		}
 	}
@@ -194,5 +216,31 @@ public class Usuario {
 		return "DADOS USUARIO"+ "\n" + getId() + "\n" + getNome() + "\n" + getCpf() + "\n" + getLogin() + "\n" + getSenha() + "\n"
 				+ getHorarioDeAcesso() + "\n" + getTipoUsuario() + "\n" + isAcessoLivre() + "\n"
 				+ isPermissaoAlterarTemperatura() + "\n" + getEmpresa().getCnpj();
+	}
+	
+	public boolean validarHoras(String horario)
+	{
+		int horas=0;
+        int minutos=0;
+        String horasStr = horario.substring(0,2);
+        String minutosStr = horario.substring(3,5);
+        try {
+            horas = Integer.parseInt(horasStr);
+            minutos = Integer.parseInt(minutosStr);
+        } catch (Exception e) {
+            return false;
+        }
+            if (horas < 0 || horas > 23)
+            {
+                return false;
+            }
+            else
+            {
+                if (minutos <0 || minutos >59)
+                {
+                     return false;
+                }
+            }
+            return true;
 	}
 }

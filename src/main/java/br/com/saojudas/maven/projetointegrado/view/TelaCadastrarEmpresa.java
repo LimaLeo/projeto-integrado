@@ -32,14 +32,15 @@ import br.com.saojudas.maven.projetointegrado.model.Empresa;
 import br.com.saojudas.maven.projetointegrado.model.ItemCadastroEmpresa;
 import br.com.saojudas.maven.projetointegrado.model.Status;
 
-public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
+public class TelaCadastrarEmpresa extends JDialog implements ActionListener
+{
 	private static Object[] object;
 
 	// componentes formul�rio
 	private JLabel lTitulo, lCnpj, lRazaoSocial, lConjuntos, lHorario, lTemperaturaMax;
 	private JTextField tfRazaoSocial;
 	private JComboBox<String> cbConjuntos;
-	private JButton bSalvar, bLimpar, bBuscaEmpresa;
+	private JButton bSalvar, bLimpar, bCancelar;
 	private JFormattedTextField ftfCnpj, ftfHorario, ftfTemperaturaMaxima;
 
 	// atributo mascara
@@ -65,15 +66,19 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 	// atributo status da tela
 	static EstadoTela estadoTela;
+	// atributo para controlar se o usuario confirmou alguma ação
+	static boolean confirma;
 
-	public TelaCadastrarEmpresa(JFrame fr, Empresa empresa) {
+	public TelaCadastrarEmpresa(JFrame fr, Empresa empresa)
+	{
 		// invoca o metodo construtor da superclasse
 		super(fr, true);
 
 		// determina o idioma padrao para portugues
 		// bn = ResourceBundle.getBundle("idioma", new Locale("pt", "BR"));
+		confirma = false;
 
-		// AplicaLookAndFeel.lookAndFeel();
+		AplicaLookAndFeel.lookAndFeel();
 
 		// Configura o Container
 		container = getContentPane();
@@ -95,7 +100,8 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		tfRazaoSocial = new JTextField(15);
 
 		// instancia mascara
-		try {
+		try
+		{
 			mascaraCnpj = new MaskFormatter("##.###.###/####-##");
 			mascaraCnpj.setPlaceholderCharacter('_');
 
@@ -104,7 +110,9 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 			mascaraTemperaturaMaxima = new MaskFormatter("## C�");
 			mascaraTemperaturaMaxima.setPlaceholderCharacter('_');
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.err.println("Erro na formata��o: " + e.getMessage());
 			System.exit(-1);
 		}
@@ -119,18 +127,21 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		conjuntoCtrl = new ConjuntoCtrl();
 		conjuntos = conjuntoCtrl.consultarTodosConjuntos();
 
-		for (Conjunto c : conjuntos) {
+		for (Conjunto c : conjuntos)
+		{
 			cbConjuntos.addItem(c.getBloco());
 		}
 
 		// Instancia os componentes do Sul
 		bSalvar = new JButton();
 		bLimpar = new JButton();
+		bCancelar = new JButton();
 		// bBuscaEmpresa = new JButton(" ... ");
 
 		// bBuscaEmpresa.addActionListener(this);
 		bSalvar.addActionListener(this);
 		bLimpar.addActionListener(this);
+		bCancelar.addActionListener(this);
 
 		// instancia paineis
 		pNorte = new JPanel(new GridLayout(1, 1, 5, 5));
@@ -213,6 +224,11 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pSul.add(bLimpar, gBC);
 
+		gBC.gridx = 2;
+		gBC.gridy = 0;
+		gBC.insets = new Insets(5, 5, 5, 5);
+		pSul.add(bCancelar, gBC);
+
 		// gBC.gridx = 0;
 		// gBC.gridy = 0;
 		// gBC.insets = new Insets(5, 5, 5, 5);
@@ -237,16 +253,21 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		setComponentText();
 
 		// congifura o painel
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(650, 400);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		// setExtendedState(MAXIMIZED_BOTH);
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == bSalvar) {
-			if (estadoTela == EstadoTela.CADASTRAR) {
-				try {
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getSource() == bSalvar)
+		{
+			if (estadoTela == EstadoTela.CADASTRAR)
+			{
+				try
+				{
 					empresa = new Empresa(
 							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
 							tfRazaoSocial.getText(), ftfHorario.getText().replace("_", ""),
@@ -256,11 +277,16 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 					conjunto = conjuntoCtrl.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
 
 					dispose();
-				} catch (Exception f) {
+				}
+				catch (Exception f)
+				{
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
 				}
-			} else if (estadoTela == EstadoTela.ALTERAR) {
-				try {
+			}
+			else if (estadoTela == EstadoTela.ALTERAR)
+			{
+				try
+				{
 					empresa = new Empresa(
 							ftfCnpj.getText().replace("_", "").replace(".", "").replace("-", "").replace("/", ""),
 							tfRazaoSocial.getText(), ftfHorario.getText().replace("_", ""),
@@ -269,22 +295,33 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 
 					conjunto = conjuntoCtrl.consultaConjunto(conjuntos.get(cbConjuntos.getSelectedIndex()).getBloco());
 
+					confirma = true;
+
 					dispose();
-				} catch (Exception f) {
+				}
+				catch (Exception f)
+				{
 					JOptionPane.showMessageDialog(null, f.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 
-		if (e.getSource() == bLimpar) {
+		if (e.getSource() == bLimpar)
+		{
 			ftfCnpj.setText("");
 			tfRazaoSocial.setText("");
 			ftfHorario.setText("");
 			ftfTemperaturaMaxima.setText("");
 		}
+
+		if (e.getSource() == bCancelar)
+		{
+			this.dispose();
+		}
 	}
 
-	public void setComponentText() {
+	public void setComponentText()
+	{
 		lTitulo.setText(bn.getString("telaCadastrarEmpresa.label.titulo"));
 		lCnpj.setText(bn.getString("telaCadastrarEmpresa.label.cnpj"));
 		lRazaoSocial.setText(bn.getString("telaCadastrarEmpresa.label.razaoSocial"));
@@ -293,23 +330,28 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 		lTemperaturaMax.setText(bn.getString("telaCadastrarEmpresa.label.temperaturaMax"));
 		bSalvar.setText(bn.getString("telaCadastrarEmpresa.button.salvar"));
 		bLimpar.setText(bn.getString("telaCadastrarEmpresa.button.limpar"));
+		bCancelar.setText("Cancelar");
 		setTitle(bn.getString("telaCadastrarEmpresa.label.titulo"));
 	}
 
-	static ItemCadastroEmpresa cadastrarEmpresa(JFrame fr) {
+	static ItemCadastroEmpresa cadastrarEmpresa(JFrame fr)
+	{
 		TelaCadastrarEmpresa cadastrarUsuario = new TelaCadastrarEmpresa(fr, null);
 		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto);
 		return iCE;
 	}
 
-	static ItemCadastroEmpresa alteraEmpresa(JFrame fr, Empresa empresaAlterada) {
+	static ItemCadastroEmpresa alteraEmpresa(JFrame fr, Empresa empresaAlterada)
+	{
 		TelaCadastrarEmpresa cadastrarEmpresa = new TelaCadastrarEmpresa(fr, empresaAlterada);
 		ItemCadastroEmpresa iCE = new ItemCadastroEmpresa(empresa, conjunto);
 		return iCE;
 	}
 
-	public void alteraTipoDeTela(Empresa empresa) {
-		if (estadoTela == EstadoTela.CONSULTAR) {
+	public void alteraTipoDeTela(Empresa empresa)
+	{
+		if (estadoTela == EstadoTela.CONSULTAR)
+		{
 			ftfCnpj.setText(empresa.getCnpj());
 			tfRazaoSocial.setText(empresa.getRazaoSocial());
 			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
@@ -318,12 +360,33 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 			// desativa a edição
 			ftfCnpj.setEnabled(false);
 			tfRazaoSocial.setEnabled(false);
+			cbConjuntos.setEnabled(false);
 			ftfHorario.setEnabled(false);
 			ftfTemperaturaMaxima.setEnabled(false);
+			bLimpar.setEnabled(false);
+			bSalvar.setEnabled(false);
 
-		} else if (estadoTela == EstadoTela.CADASTRAR) {
+		}
+		else if (estadoTela == EstadoTela.CADASTRAR)
+		{
 
-		} else {
+		}
+		else if(TelaConsultarEmpresa.alteraEstadoTela == EstadoTela.ALTERAR && TelaPrincipal.nivelAcesso == 3)
+		{
+			ftfCnpj.setText(empresa.getCnpj());
+			tfRazaoSocial.setText(empresa.getRazaoSocial());
+			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
+			ftfTemperaturaMaxima.setText(empresa.getTemperaturaMaximaArCondicionado() + "");
+
+			// desativa a edição
+			ftfCnpj.setEnabled(false);
+			tfRazaoSocial.setEnabled(false);
+			cbConjuntos.setEnabled(false);
+			ftfHorario.setEnabled(false);
+	
+		}
+		else
+		{
 			ftfCnpj.setText(empresa.getCnpj());
 			tfRazaoSocial.setText(empresa.getRazaoSocial());
 			ftfHorario.setText(empresa.getHorarioDeFuncionamento());
@@ -336,6 +399,7 @@ public class TelaCadastrarEmpresa extends JDialog implements ActionListener {
 			ftfHorario.setEnabled(true);
 			tfRazaoSocial.setEnabled(true);
 			ftfTemperaturaMaxima.setEnabled(true);
+		
 		}
 	}
 

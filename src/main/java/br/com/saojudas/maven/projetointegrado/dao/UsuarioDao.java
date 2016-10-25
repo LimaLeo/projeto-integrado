@@ -29,6 +29,26 @@ public class UsuarioDao {
 		em.close();
 		return usuarios;
 	}
+	
+	public List<Usuario> consultarTodosUsuarioNome(String nome) {
+		em = new JPAUtil().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Usuario u where u.nome like '%" + nome + "%'");
+		List<Usuario> usuarios = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return usuarios;
+	}
+	
+	public List<Usuario> consultarTodosUsuarioCpf(String cpf) {
+		em = new JPAUtil().getEntityManager();
+		em.getTransaction().begin();
+		Query query = em.createQuery("select u from Usuario u where u.cpf = '" + cpf + "'");
+		List<Usuario> usuarios = query.getResultList();
+		em.getTransaction().commit();
+		em.close();
+		return usuarios;
+	}
 
 	public Usuario consultaUsuario(String cpf) {
 		em = new JPAUtil().getEntityManager();
