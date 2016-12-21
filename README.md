@@ -19,6 +19,6 @@ Para que a aplicação funcione é preciso segui os passos a seguir:
 
 •	Usar os seguintes dados de login:
 
-  o	Login: Usuario;
+  o	Login: usuario;
   
   o	Senha: 123;
